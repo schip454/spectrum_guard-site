@@ -1,0 +1,168 @@
+---
+/**
+ * Статья блога `/blog/{slug}/`. Answer-First в начале, структура под извлечение,
+ * внутренняя ссылка на профильную услугу/гео-страницу. Schema BlogPosting с автором.
+ */
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import AnswerFirst from '../../components/AnswerFirst.astro';
+import LinkCardGrid from '../../components/LinkCardGrid.astro';
+import type { LinkCardItem } from '../../components/LinkCardGrid.astro';
+import CtaSection from '../../components/CtaSection.astro';
+import { getService } from '../../data/services';
+import { getCity } from '../../data/cities';
+import { articleSchema, breadcrumbSchema } from '../../lib/schema';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog', ({ data }) => !data.draft);
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const data = post.data;
+const path = `/blog/${post.id}/`;
+
+const service = getService(data.relatedService);
+const city = data.relatedCity ? getCity(data.relatedCity) : undefined;
+
+const crumbs = [
+  { name: 'Главная', href: '/' },
+  { name: 'Блог', href: '/blog/' },
+  { name: data.title, href: path },
+];
+
+// Внутренняя ссылка: профильная услуга (+ гео-страница, если задан город).
+const related: LinkCardItem[] = [];
+if (service) {
+  const href = city ? `/${city.slug}/${service.slug}/` : `/uslugi/${service.slug}/`;
+  related.push({
+    title: city ? `${service.nameNom} ${city.prep}` : service.nameNom,
+    sub: service.tagline,
+    href,
+    icon: service.icon as LinkCardItem['icon'],
+  });
+}
+
+const schemas = [
+  articleSchema({
+    title: data.title,
+    description: data.description,
+    url: path,
+    author: data.author,
+    datePublished: data.date,
+    dateModified: data.updated ?? data.date,
+    image: data.cover,
+  }),
+  breadcrumbSchema(crumbs),
+];
+
+const fmt = new Intl.DateTimeFormat('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
+---
+
+<Base
+  title={`${data.title} — Spectrum Guard`}
+  description={data.description}
+  {path}
+  ogType="article"
+  {schemas}
+>
+  <Breadcrumbs {crumbs} />
+
+  <article class="article">
+    <div class="container container--narrow">
+      <p class="eyebrow article__eyebrow">Блог</p>
+      <h1 class="article__title">{data.title}</h1>
+      <p class="article__meta mono">
+        {data.author} · <time datetime={data.date.toISOString()}>{fmt.format(data.date)}</time>
+      </p>
+
+      <AnswerFirst text={data.answerFirst} />
+
+      <div class="prose">
+        <Content />
+      </div>
+    </div>
+  </article>
+
+  {
+    related.length > 0 && (
+      <section class="container container--narrow section">
+        <LinkCardGrid eyebrow="По теме" heading="Чем поможем" items={related} columns={2} />
+      </section>
+    )
+  }
+
+  <CtaSection source={`Блог: ${data.title}`} heading="Нужна помощь сейчас?" />
+</Base>
+
+<style>
+  .article {
+    padding-block: var(--space-16) var(--space-8);
+  }
+  .article__title {
+    font-size: var(--fs-h1);
+    margin: var(--space-3) 0 var(--space-4);
+    max-width: 26ch;
+  }
+  .article__meta {
+    color: var(--text-500);
+    margin-bottom: var(--space-8);
+  }
+
+  /* Типографика тела статьи */
+  .prose {
+    margin-top: var(--space-8);
+    color: var(--text-300);
+  }
+  .prose :global(h2) {
+    color: var(--text-100);
+    font-size: var(--fs-h2);
+    margin: var(--space-12) 0 var(--space-4);
+  }
+  .prose :global(h3) {
+    color: var(--text-100);
+    font-size: var(--fs-h3);
+    margin: var(--space-8) 0 var(--space-3);
+  }
+  .prose :global(p) {
+    margin-bottom: var(--space-4);
+    max-width: 70ch;
+  }
+  .prose :global(ul),
+  .prose :global(ol) {
+    margin: 0 0 var(--space-4) var(--space-6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+  .prose :global(ul) {
+    list-style: none;
+  }
+  .prose :global(ul li)::before {
+    content: '—';
+    color: var(--accent);
+    margin-right: var(--space-2);
+  }
+  .prose :global(ol) {
+    list-style: decimal;
+  }
+  .prose :global(ol li) {
+    padding-left: var(--space-2);
+  }
+  .prose :global(li) {
+    color: var(--text-300);
+  }
+  .prose :global(a) {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .prose :global(a:hover) {
+    color: var(--text-100);
+  }
+  .prose :global(strong) {
+    color: var(--text-100);
+  }
+</style>

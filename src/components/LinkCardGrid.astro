@@ -1,0 +1,126 @@
+---
+/**
+ * Сетка ссылок-карточек для перелинковки (другие услуги в городе, эта услуга в
+ * соседних городах, релевантные статьи). Тонкая граница, hover — латунь + сдвиг стрелки.
+ */
+import Icon from './icons/Icon.astro';
+import type { IconName } from './icons/paths';
+
+export interface LinkCardItem {
+  title: string;
+  sub?: string;
+  href: string;
+  icon?: IconName;
+}
+interface Props {
+  heading: string;
+  items: LinkCardItem[];
+  /** Моно-метка над заголовком. */
+  eyebrow?: string;
+  columns?: 2 | 3 | 4;
+}
+const { heading, items, eyebrow, columns = 3 } = Astro.props;
+---
+
+<section class="links">
+  {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+  <h2 class="links__heading">{heading}</h2>
+  <ul class:list={['links__grid', `links__grid--${columns}`]}>
+    {
+      items.map((item) => (
+        <li>
+          <a href={item.href} class="link-card">
+            {item.icon && <Icon name={item.icon} size={22} class="link-card__icon" />}
+            <span class="link-card__body">
+              <span class="link-card__title">{item.title}</span>
+              {item.sub && <span class="link-card__sub">{item.sub}</span>}
+            </span>
+            <Icon name="arrow" size={18} class="link-card__arrow" />
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</section>
+
+<style>
+  .links__heading {
+    margin-bottom: var(--space-6);
+  }
+  .eyebrow + .links__heading {
+    margin-top: var(--space-2);
+  }
+  .links__grid {
+    display: grid;
+    gap: var(--col-gap);
+  }
+  .links__grid--3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .links__grid--2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .links__grid--4 {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .link-card {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    height: 100%;
+    padding: var(--space-5, 1.25rem) var(--space-6);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--bg-800);
+    transition: border-color var(--dur) var(--ease), background-color var(--dur) var(--ease);
+  }
+  .link-card:hover {
+    border-color: var(--accent);
+    background: var(--bg-700);
+  }
+  .link-card__icon {
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+  .link-card__body {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+  }
+  .link-card__title {
+    color: var(--text-100);
+    font-weight: 500;
+  }
+  .link-card__sub {
+    color: var(--text-500);
+    font-size: var(--fs-small);
+  }
+  .link-card__arrow {
+    color: var(--text-500);
+    flex-shrink: 0;
+    transition: transform var(--dur) var(--ease), color var(--dur) var(--ease);
+  }
+  .link-card:hover .link-card__arrow {
+    color: var(--accent);
+    transform: translateX(3px);
+  }
+
+  @media (max-width: 1000px) {
+    .links__grid--4 {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  @media (max-width: 860px) {
+    .links__grid--3,
+    .links__grid--4 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 560px) {
+    .links__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

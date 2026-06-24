@@ -1,0 +1,171 @@
+---
+/**
+ * `/kontakty/` — корпоративный мобильный, e-mail, Telegram, форма, способы связи, гео.
+ * Schema: ContactPoint уже в Organization (сайтово). Здесь — Breadcrumb.
+ */
+import Base from '../layouts/Base.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import PageHero from '../components/PageHero.astro';
+import LeadForm from '../components/LeadForm.astro';
+import TelegramCTA from '../components/TelegramCTA.astro';
+import Icon from '../components/icons/Icon.astro';
+import { contacts, telHref } from '../data/contacts';
+import { cities } from '../data/cities';
+import { breadcrumbSchema } from '../lib/schema';
+
+const title = 'Контакты — Spectrum Guard';
+const description =
+  'Связаться со Spectrum Guard: корпоративный телефон, e-mail, Telegram. Оставьте заявку — ' +
+  'перезвоним или ответим в мессенджере. Работаем в 8 городах России, заявки 24/7.';
+const path = '/kontakty/';
+
+const crumbs = [
+  { name: 'Главная', href: '/' },
+  { name: 'Контакты', href: path },
+];
+---
+
+<Base {title} {description} {path} schemas={[breadcrumbSchema(crumbs)]}>
+  <Breadcrumbs {crumbs} />
+
+  <PageHero
+    eyebrow="Контакты"
+    h1="Связаться со Spectrum Guard"
+    answer="Оставьте заявку на сайте, напишите в Telegram или закажите обратный звонок — перезвоним или ответим в мессенджере. Работаем в восьми городах России выездным форматом, заявки принимаем круглосуточно. Конфиденциально и в правовом поле."
+  />
+
+  <section class="container section contacts">
+    <div class="contacts__info">
+      <ul class="contacts__list">
+        <li class="perimeter">
+          <Icon name="phone" size={22} class="contacts__icon" />
+          <div>
+            <p class="contacts__label mono">Телефон</p>
+            <a href={telHref} class="contacts__value">{contacts.phone.display}</a>
+          </div>
+        </li>
+        <li class="perimeter">
+          <Icon name="telegram" size={22} class="contacts__icon" />
+          <div>
+            <p class="contacts__label mono">Telegram</p>
+            <a href={contacts.telegram.url} class="contacts__value" rel="noopener" target="_blank">
+              {contacts.telegram.label}
+            </a>
+          </div>
+        </li>
+        <li class="perimeter">
+          <Icon name="mail" size={22} class="contacts__icon" />
+          <div>
+            <p class="contacts__label mono">E-mail</p>
+            <a href={`mailto:${contacts.email}`} class="contacts__value">{contacts.email}</a>
+          </div>
+        </li>
+        <li class="perimeter">
+          <Icon name="clock" size={22} class="contacts__icon" />
+          <div>
+            <p class="contacts__label mono">Режим</p>
+            <span class="contacts__value contacts__value--plain">{contacts.hours}</span>
+          </div>
+        </li>
+      </ul>
+
+      <div class="contacts__geo">
+        <p class="contacts__label mono">География</p>
+        <p class="contacts__geo-text">{cities.map((c) => c.nom).join(' · ')}</p>
+      </div>
+
+      <div class="contacts__tg">
+        <TelegramCTA variant="ghost" size="lg" full />
+      </div>
+    </div>
+
+    <div class="contacts__form perimeter perimeter--full">
+      <span class="perimeter__corner tl"></span>
+      <span class="perimeter__corner tr"></span>
+      <span class="perimeter__corner bl"></span>
+      <span class="perimeter__corner br"></span>
+      <h2 class="contacts__form-title">Оставить заявку</h2>
+      <p class="contacts__form-lead">Коротко опишите ситуацию и город — ответим и подскажем формат.</p>
+      <LeadForm source="Страница контактов" id="lead" />
+    </div>
+  </section>
+</Base>
+
+<style>
+  .contacts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: start;
+  }
+  .contacts__list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--col-gap);
+  }
+  .contacts__list li {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-4);
+    padding: var(--space-6);
+    border: 1px solid var(--line);
+    background: var(--bg-800);
+  }
+  .contacts__icon {
+    color: var(--accent);
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .contacts__label {
+    color: var(--text-500);
+    margin-bottom: var(--space-2);
+  }
+  .contacts__value {
+    color: var(--text-100);
+    font-weight: 500;
+  }
+  a.contacts__value:hover {
+    color: var(--accent);
+  }
+  .contacts__value--plain {
+    font-weight: 400;
+    color: var(--text-300);
+  }
+  .contacts__geo {
+    margin-top: var(--space-8);
+  }
+  .contacts__geo-text {
+    color: var(--text-300);
+    margin-top: var(--space-2);
+  }
+  .contacts__tg {
+    margin-top: var(--space-6);
+    max-width: 320px;
+  }
+  .contacts__form {
+    padding: clamp(1.5rem, 4vw, 2.5rem);
+    background: var(--bg-800);
+    outline-color: var(--line-2);
+  }
+  .contacts__form-title {
+    margin-bottom: var(--space-2);
+  }
+  .contacts__form-lead {
+    color: var(--text-300);
+    font-size: var(--fs-small);
+    margin-bottom: var(--space-6);
+  }
+  @media (max-width: 860px) {
+    .contacts {
+      grid-template-columns: 1fr;
+    }
+    .contacts__form {
+      order: -1;
+    }
+  }
+  @media (max-width: 460px) {
+    .contacts__list {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

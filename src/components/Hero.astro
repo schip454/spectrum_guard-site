@@ -1,0 +1,220 @@
+---
+/**
+ * Главный герой: слоган капсом display-шрифтом, тёмный кадр под CSS-затемнением,
+ * сигнатурная рамка-периметр с моно-подписями, ряд из 5 интент-карточек снизу.
+ *
+ * Фон: пока реальный видео-кадр не отобран (TODO:CONTENT — Котельническая на закате /
+ * Москва-Сити / кортеж, единый тёмный грейд), используем честное CSS-затемнение без
+ * стоковых клише. Реальный <video poster> подставляется в слот ниже.
+ */
+import IntentCard from './IntentCard.astro';
+import Icon from './icons/Icon.astro';
+import type { IconName } from './icons/paths';
+import { services } from '../data/services';
+import { contacts } from '../data/contacts';
+
+const intents = services.map((s, i) => ({
+  label: s.intentLabel,
+  sub: s.tagline,
+  href: `/uslugi/${s.slug}/`,
+  icon: s.icon as IconName,
+  index: i + 1,
+}));
+---
+
+<section class="hero">
+  <div class="hero__bg" aria-hidden="true">
+    {/* TODO:CONTENT — реальный тёмный видео-кадр в едином грейде:
+        <video class="hero__video" autoplay muted loop playsinline poster="/media/hero-poster.webp">
+          <source src="/media/hero.webm" type="video/webm" />
+        </video> */}
+    <div class="hero__scrim"></div>
+  </div>
+
+  <div class="container hero__inner">
+    <div class="hero__frame perimeter perimeter--full">
+      <span class="perimeter__corner tl"></span>
+      <span class="perimeter__corner tr"></span>
+      <span class="perimeter__corner bl"></span>
+      <span class="perimeter__corner br"></span>
+
+      <div class="hero__meta hero__meta--top">
+        <span class="mono">SPECTRUM&nbsp;GUARD</span>
+        <span class="mono">RU · 8 ГОРОДОВ</span>
+      </div>
+
+      <p class="hero__eyebrow mono">Охранное агентство</p>
+      <h1 class="hero__title display">Мы заботимся<br />о вашей безопасности</h1>
+      <p class="hero__lead">
+        Личная охрана, защита при угрозах, сопровождение при переезде, помощь с соседями и
+        охрана мероприятий. Спокойно, в правовом поле и конфиденциально.
+      </p>
+
+      <div class="hero__actions">
+        <a href="#lead" class="hero__cta hero__cta--primary">
+          Оставить заявку <Icon name="arrow" size={18} />
+        </a>
+        <a href={contacts.telegram.url} class="hero__cta hero__cta--ghost" rel="noopener" target="_blank">
+          <Icon name="telegram" size={18} /> Написать в Telegram
+        </a>
+      </div>
+
+      <div class="hero__meta hero__meta--bottom">
+        <span class="mono">56.8389° N · 60.6057° E</span>
+        <span class="mono">REC · 24/7</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <ul class="hero__intents" aria-label="Направления">
+      {
+        intents.map((i) => (
+          <li>
+            <IntentCard label={i.label} sub={i.sub} href={i.href} icon={i.icon} index={i.index} />
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    padding-block: var(--space-16) var(--space-12);
+    overflow: hidden;
+  }
+  .hero__bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background:
+      radial-gradient(120% 90% at 20% -10%, rgba(195, 154, 85, 0.08), transparent 55%),
+      radial-gradient(100% 100% at 100% 0%, rgba(26, 30, 37, 0.9), transparent 60%),
+      repeating-linear-gradient(0deg, transparent 0 3px, rgba(255, 255, 255, 0.012) 3px 4px),
+      var(--bg-900);
+  }
+  .hero__video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .hero__scrim {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(11, 13, 16, 0.55) 0%, rgba(11, 13, 16, 0.85) 100%);
+  }
+  .hero__inner {
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero__frame {
+    max-width: 56rem;
+    padding: clamp(1.5rem, 4vw, 3rem);
+    outline-color: var(--line-2);
+  }
+  /* Оркестрованный момент на загрузке: проявление рамки и кадра. */
+  .hero__frame > .perimeter__corner {
+    opacity: 0;
+    animation: corner-in 0.5s var(--ease) forwards;
+  }
+  .hero__frame .tl { animation-delay: 0.05s; }
+  .hero__frame .tr { animation-delay: 0.15s; }
+  .hero__frame .bl { animation-delay: 0.25s; }
+  .hero__frame .br { animation-delay: 0.35s; }
+  @keyframes corner-in {
+    from { opacity: 0; transform: scale(0.6); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  .hero__meta {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-4);
+    color: var(--text-500);
+  }
+  .hero__meta--top {
+    margin-bottom: var(--space-8);
+  }
+  .hero__meta--bottom {
+    margin-top: var(--space-8);
+  }
+
+  .hero__eyebrow {
+    color: var(--accent);
+    margin-bottom: var(--space-4);
+  }
+  .hero__title {
+    font-size: var(--fs-display);
+    text-transform: uppercase;
+    letter-spacing: 0.01em;
+    color: var(--text-100);
+    margin-bottom: var(--space-6);
+  }
+  .hero__lead {
+    max-width: 52ch;
+    color: var(--text-300);
+    font-size: 1.125rem;
+  }
+
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    margin-top: var(--space-8);
+  }
+  .hero__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: 0.95rem 1.6rem;
+    border-radius: var(--radius);
+    border: 1px solid transparent;
+    font-weight: 500;
+    transition: border-color var(--dur) var(--ease), background-color var(--dur) var(--ease);
+  }
+  .hero__cta--primary {
+    background: var(--accent-tint);
+    border-color: var(--accent);
+    color: var(--text-100);
+  }
+  .hero__cta--primary:hover {
+    background: rgba(195, 154, 85, 0.2);
+  }
+  .hero__cta--ghost {
+    border-color: var(--line-2);
+    color: var(--text-100);
+  }
+  .hero__cta--ghost:hover {
+    border-color: var(--accent);
+  }
+
+  .hero__intents {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: var(--col-gap);
+    margin-top: var(--space-16);
+  }
+
+  @media (max-width: 1100px) {
+    .hero__intents {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  @media (max-width: 720px) {
+    .hero__intents {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 460px) {
+    .hero__intents {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

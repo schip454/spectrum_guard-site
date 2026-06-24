@@ -1,0 +1,68 @@
+---
+/**
+ * Рендер секции услуги: заголовок H2 + самодостаточные абзацы и/или маркированный
+ * список с кастомным чек-знаком. Разделяются хайрлайнами на уровне страницы.
+ */
+import Icon from './icons/Icon.astro';
+import type { ServiceSection } from '../data/types';
+
+interface Props {
+  section: ServiceSection;
+}
+const { section } = Astro.props;
+---
+
+<section class="svc-section">
+  <h2>{section.heading}</h2>
+  {
+    section.body && (
+      <div class="svc-section__prose flow">
+        {section.body.map((p) => (
+          <p>{p}</p>
+        ))}
+      </div>
+    )
+  }
+  {
+    section.items && (
+      <ul class="svc-section__list">
+        {section.items.map((item) => (
+          <li>
+            <Icon name="check" size={18} class="svc-section__check" />
+            <span>{item}</span>
+          </li>
+        ))}
+      </ul>
+    )
+  }
+</section>
+
+<style>
+  .svc-section h2 {
+    margin-bottom: var(--space-5, 1.25rem);
+  }
+  .svc-section__prose {
+    max-width: 70ch;
+    color: var(--text-300);
+  }
+  .svc-section__prose p {
+    color: var(--text-300);
+  }
+  .svc-section__list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--space-4) var(--space-8);
+    max-width: 78ch;
+  }
+  .svc-section__list li {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    color: var(--text-100);
+  }
+  .svc-section__check {
+    color: var(--accent);
+    margin-top: 0.2rem;
+    flex-shrink: 0;
+  }
+</style>

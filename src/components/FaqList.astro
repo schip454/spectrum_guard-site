@@ -1,0 +1,110 @@
+---
+/**
+ * FAQ-аккордеон на нативном <details>. FAQPage-схема отдаётся страницей через
+ * lib/schema (текст совпадает с видимым). Моно-нумерация.
+ */
+import type { Faq } from '../data/types';
+
+interface Props {
+  items: Faq[];
+  heading?: string;
+}
+const { items, heading = 'Частые вопросы' } = Astro.props;
+---
+
+<section class="faq" aria-labelledby="faq-heading">
+  <h2 id="faq-heading">{heading}</h2>
+  <div class="faq__list">
+    {
+      items.map((item, i) => (
+        <details class="faq__item">
+          <summary class="faq__q">
+            <span class="faq__n mono">{String(i + 1).padStart(2, '0')}</span>
+            <span class="faq__q-text">{item.q}</span>
+            <span class="faq__chev" aria-hidden="true" />
+          </summary>
+          <div class="faq__a">
+            <p>{item.a}</p>
+          </div>
+        </details>
+      ))
+    }
+  </div>
+</section>
+
+<style>
+  .faq__list {
+    margin-top: var(--space-6);
+    border-top: 1px solid var(--line);
+  }
+  .faq__item {
+    border-bottom: 1px solid var(--line);
+  }
+  .faq__q {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-4);
+    padding: var(--space-6) 0;
+    cursor: pointer;
+    list-style: none;
+    font-size: var(--fs-h3);
+    color: var(--text-100);
+    transition: color var(--dur) var(--ease);
+  }
+  .faq__q::-webkit-details-marker {
+    display: none;
+  }
+  .faq__q:hover {
+    color: var(--accent);
+  }
+  .faq__n {
+    color: var(--accent);
+    flex-shrink: 0;
+    padding-top: 0.25rem;
+  }
+  .faq__q-text {
+    flex: 1;
+  }
+  .faq__chev {
+    position: relative;
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+    align-self: center;
+  }
+  .faq__chev::before,
+  .faq__chev::after {
+    content: '';
+    position: absolute;
+    background: var(--accent);
+    transition: transform var(--dur) var(--ease), opacity var(--dur) var(--ease);
+  }
+  .faq__chev::before {
+    top: 6px;
+    left: 0;
+    width: 14px;
+    height: 1.5px;
+  }
+  .faq__chev::after {
+    top: 0;
+    left: 6px;
+    width: 1.5px;
+    height: 14px;
+  }
+  .faq__item[open] .faq__chev::after {
+    transform: scaleY(0);
+    opacity: 0;
+  }
+  .faq__a {
+    padding: 0 0 var(--space-6) calc(2ch + var(--space-4));
+    max-width: 72ch;
+  }
+  .faq__a p {
+    color: var(--text-300);
+  }
+  @media (max-width: 520px) {
+    .faq__a {
+      padding-left: 0;
+    }
+  }
+</style>

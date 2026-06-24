@@ -1,0 +1,62 @@
+---
+/**
+ * Локальный блок гео-страницы. Для городов с фактурой (hasLocalProof) — реальный
+ * локальный контекст и медиа. Без фактуры — честный локальный контекст, без фейка
+ * (никаких выдуманных кейсов/фото). Медиа подключаются, когда отобраны (TODO:CONTENT).
+ */
+import type { City } from '../data/types';
+
+interface Props {
+  city: City;
+  serviceNom: string;
+}
+const { city, serviceNom } = Astro.props;
+const hasMedia = city.hasLocalProof && city.media.length > 0;
+---
+
+<section class="local">
+  <p class="eyebrow">{city.nom} · {city.region}</p>
+  <h2>{serviceNom} {city.prep}</h2>
+  {city.localContext && <p class="local__context">{city.localContext}</p>}
+
+  {
+    hasMedia ? (
+      <div class="local__media">
+        {/* TODO:CONTENT — медиа через astro:assets, единый тёмный грейд, размеры заданы */}
+        {city.media.map((src) => (
+          <img src={src} alt={`${serviceNom} — ${city.nom}`} loading="lazy" decoding="async" width="640" height="420" />
+        ))}
+      </div>
+    ) : (
+      <!-- TODO:CONTENT — локальные фото/кейсы для {city.nom}, когда появится фактура -->
+    )
+  }
+</section>
+
+<style>
+  .local {
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--bg-800);
+    padding: clamp(1.5rem, 4vw, 2.5rem);
+  }
+  .local h2 {
+    margin: var(--space-2) 0 var(--space-4);
+  }
+  .local__context {
+    color: var(--text-300);
+    max-width: 70ch;
+  }
+  .local__media {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: var(--col-gap);
+    margin-top: var(--space-6);
+  }
+  .local__media img {
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius);
+    filter: grayscale(0.3) contrast(1.05) brightness(0.85);
+  }
+</style>

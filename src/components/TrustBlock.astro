@@ -1,0 +1,69 @@
+---
+/**
+ * Трастовый блок: лицензия и реквизиты. Скрыт флагом TRUST_BLOCK_ENABLED,
+ * пока нет данных. Включается одним движением в src/config.ts.
+ * Нигде не упоминаем, что данных «пока нет» — блока просто не существует на странице.
+ */
+import { TRUST_BLOCK_ENABLED } from '../config';
+import { contacts } from '../data/contacts';
+
+const { compact = false } = Astro.props;
+const legal = contacts.legal;
+---
+
+{
+  TRUST_BLOCK_ENABLED && (
+    <section class:list={['trust', { 'trust--compact': compact }]} aria-label="Реквизиты и лицензия">
+      <p class="eyebrow">Документы</p>
+      <dl class="trust__list">
+        {legal.name && (
+          <div>
+            <dt class="mono">Организация</dt>
+            <dd>{legal.name}</dd>
+          </div>
+        )}
+        {legal.license && (
+          <div>
+            <dt class="mono">Лицензия</dt>
+            <dd>{legal.license}</dd>
+          </div>
+        )}
+        {legal.inn && (
+          <div>
+            <dt class="mono">ИНН</dt>
+            <dd>{legal.inn}</dd>
+          </div>
+        )}
+        {legal.ogrn && (
+          <div>
+            <dt class="mono">ОГРН</dt>
+            <dd>{legal.ogrn}</dd>
+          </div>
+        )}
+      </dl>
+    </section>
+  )
+}
+
+<style>
+  .trust {
+    border: 1px solid var(--line);
+    border-left: 2px solid var(--accent);
+    padding: var(--space-6);
+    background: var(--bg-800);
+    border-radius: var(--radius);
+  }
+  .trust__list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: var(--space-4);
+    margin-top: var(--space-4);
+  }
+  .trust dt {
+    color: var(--text-500);
+    margin-bottom: 2px;
+  }
+  .trust dd {
+    color: var(--text-100);
+  }
+</style>

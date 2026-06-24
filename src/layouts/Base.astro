@@ -1,0 +1,57 @@
+---
+/**
+ * Базовый макет: <head> через <Seo>, шапка/подвал, скип-линк, аналитика.
+ * Organization JSON-LD добавляется сайтово; страничные схемы — через prop `schemas`.
+ */
+import '../styles/tokens.css';
+import '../styles/base.css';
+
+import Seo from '../components/Seo.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Analytics from '../components/Analytics.astro';
+import { organizationSchema, graph } from '../lib/schema';
+
+interface Props {
+  title: string;
+  description: string;
+  path?: string;
+  image?: string;
+  ogType?: 'website' | 'article';
+  /** Страничные узлы Schema.org (Service/FAQPage/Breadcrumb/Article). */
+  schemas?: object[];
+  noindex?: boolean;
+  /** Класс <main> (например, для героя во весь экран без верхнего отступа). */
+  mainClass?: string;
+}
+
+const {
+  title,
+  description,
+  path,
+  image,
+  ogType,
+  schemas = [],
+  noindex,
+  mainClass,
+} = Astro.props;
+
+// Organization — сайтово; объединяем со страничными узлами в один @graph.
+const jsonLd = graph(organizationSchema(), ...schemas);
+---
+
+<!doctype html>
+<html lang="ru">
+  <head>
+    <Seo {title} {description} {path} {image} {ogType} {jsonLd} {noindex} />
+  </head>
+  <body>
+    <a href="#main" class="skip-link">Перейти к содержимому</a>
+    <Header />
+    <main id="main" class={mainClass}>
+      <slot />
+    </main>
+    <Footer />
+    <Analytics />
+  </body>
+</html>

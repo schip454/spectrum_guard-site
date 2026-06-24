@@ -1,0 +1,67 @@
+---
+/**
+ * 404. Голосом интерфейса, по делу, без воды. Уводим обратно в навигацию.
+ */
+import Base from '../layouts/Base.astro';
+import Button from '../components/Button.astro';
+import { servicesNav } from '../data/nav';
+---
+
+<Base
+  title="Страница не найдена — Spectrum Guard"
+  description="Такой страницы нет. Вернитесь на главную или выберите направление."
+  noindex
+>
+  <section class="nf container">
+    <p class="eyebrow">Ошибка 404</p>
+    <h1 class="nf__title display">Страницы нет</h1>
+    <p class="nf__text">
+      Возможно, адрес устарел или в ссылке опечатка. Вернитесь на главную или выберите направление.
+    </p>
+    <div class="nf__actions">
+      <Button href="/" variant="primary" size="lg" icon="arrow">На главную</Button>
+      <Button href="/kontakty/" variant="ghost" size="lg">Контакты</Button>
+    </div>
+
+    <ul class="nf__links">
+      {servicesNav.map((s) => (
+        <li><a href={s.href}>{s.label}</a></li>
+      ))}
+    </ul>
+  </section>
+</Base>
+
+<style>
+  .nf {
+    padding-block: var(--space-24) var(--space-16);
+    max-width: 60ch;
+  }
+  .nf__title {
+    font-size: var(--fs-display);
+    margin: var(--space-3) 0 var(--space-4);
+  }
+  .nf__text {
+    color: var(--text-300);
+  }
+  .nf__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    margin-top: var(--space-8);
+  }
+  .nf__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-6);
+    margin-top: var(--space-12);
+    padding-top: var(--space-6);
+    border-top: 1px solid var(--line);
+  }
+  .nf__links a {
+    color: var(--text-300);
+    font-size: var(--fs-small);
+  }
+  .nf__links a:hover {
+    color: var(--accent);
+  }
+</style>

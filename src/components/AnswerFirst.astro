@@ -1,0 +1,36 @@
+---
+/**
+ * Answer-First врезка: прямой ответ на главный интент в 40–60 слов.
+ * Визуально выделена левой латунной чертой, без скругления (см. design-spec).
+ * Это извлекаемый фрагмент для нейровыдачи — текст совпадает с видимым.
+ */
+interface Props {
+  text: string;
+  /** Необязательная моно-метка сверху (например, код города / услуга). */
+  label?: string;
+}
+const { text, label } = Astro.props;
+---
+
+<div class="answer-first">
+  {label && <p class="answer-first__label mono">{label}</p>}
+  <p class="answer-first__text">{text}</p>
+</div>
+
+<style>
+  .answer-first {
+    border-left: 2px solid var(--accent);
+    padding: var(--space-4) 0 var(--space-4) var(--space-6);
+    max-width: 68ch;
+  }
+  .answer-first__label {
+    margin-bottom: var(--space-2);
+    color: var(--accent);
+  }
+  .answer-first__text {
+    font-size: 1.1875rem;
+    line-height: 1.55;
+    color: var(--text-100);
+    text-wrap: pretty;
+  }
+</style>

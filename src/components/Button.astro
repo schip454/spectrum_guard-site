@@ -1,0 +1,109 @@
+---
+/**
+ * CTA-кнопка/ссылка. Основная — латунный контур с минимальной заливкой;
+ * вторичная — призрачная с границей --line-2. Без брендовых градиентов.
+ */
+import Icon from './icons/Icon.astro';
+import type { IconName } from './icons/paths';
+
+interface Props {
+  href?: string;
+  variant?: 'primary' | 'ghost';
+  size?: 'md' | 'lg';
+  icon?: IconName;
+  type?: 'button' | 'submit';
+  class?: string;
+  full?: boolean;
+  rel?: string;
+  target?: string;
+  'aria-label'?: string;
+}
+
+const {
+  href,
+  variant = 'primary',
+  size = 'md',
+  icon,
+  type = 'button',
+  class: className,
+  full = false,
+  rel,
+  target,
+  'aria-label': ariaLabel,
+} = Astro.props;
+
+const Tag = href ? 'a' : 'button';
+const cls = ['btn', `btn--${variant}`, `btn--${size}`, { 'btn--full': full }, className];
+---
+
+<Tag
+  class:list={cls}
+  {...href ? { href, rel, target } : { type }}
+  {...ariaLabel ? { 'aria-label': ariaLabel } : {}}
+>
+  <slot />
+  {icon && <Icon name={icon} size={size === 'lg' ? 20 : 18} class="btn__icon" />}
+</Tag>
+
+<style>
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    font-family: var(--font-body);
+    font-weight: 500;
+    line-height: 1;
+    text-align: center;
+    border-radius: var(--radius);
+    border: 1px solid transparent;
+    transition:
+      border-color var(--dur) var(--ease),
+      background-color var(--dur) var(--ease),
+      transform var(--dur-fast) var(--ease);
+    white-space: nowrap;
+  }
+  .btn--md {
+    padding: 0.7rem 1.25rem;
+    font-size: var(--fs-small);
+  }
+  .btn--lg {
+    padding: 0.95rem 1.6rem;
+    font-size: var(--fs-body);
+  }
+  .btn--full {
+    width: 100%;
+  }
+
+  /* Основная: латунь, заливка-минимум. */
+  .btn--primary {
+    background: var(--accent-tint);
+    border-color: var(--accent);
+    color: var(--text-100);
+  }
+  .btn--primary:hover {
+    background: rgba(195, 154, 85, 0.18);
+    border-color: var(--accent);
+  }
+  .btn--primary:active {
+    transform: translateY(1px);
+  }
+
+  /* Вторичная: призрачная. */
+  .btn--ghost {
+    background: transparent;
+    border-color: var(--line-2);
+    color: var(--text-100);
+  }
+  .btn--ghost:hover {
+    border-color: var(--accent);
+    color: var(--text-100);
+  }
+
+  .btn__icon {
+    transition: transform var(--dur) var(--ease);
+  }
+  .btn:hover .btn__icon {
+    transform: translateX(2px);
+  }
+</style>

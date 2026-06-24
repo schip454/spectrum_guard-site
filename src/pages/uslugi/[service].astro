@@ -1,0 +1,138 @@
+---
+/**
+ * Хаб услуги `/uslugi/{service}/` — общий по услуге без города + точка входа во все
+ * города. 5 страниц. Schema: Service (areaServed = все города) + FAQPage + Breadcrumb.
+ */
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import PageHero from '../../components/PageHero.astro';
+import SectionBody from '../../components/SectionBody.astro';
+import FaqList from '../../components/FaqList.astro';
+import LinkCardGrid from '../../components/LinkCardGrid.astro';
+import type { LinkCardItem } from '../../components/LinkCardGrid.astro';
+import CtaSection from '../../components/CtaSection.astro';
+import { services, otherServices } from '../../data/services';
+import { cities } from '../../data/cities';
+import { serviceHubTitle, serviceHubDescription } from '../../lib/content';
+import { serviceSchema, faqSchema, breadcrumbSchema } from '../../lib/schema';
+import type { Service } from '../../data/types';
+
+export function getStaticPaths() {
+  return services.map((service) => ({
+    params: { service: service.slug },
+    props: { service },
+  }));
+}
+
+interface Props {
+  service: Service;
+}
+const { service } = Astro.props as Props;
+
+const path = `/uslugi/${service.slug}/`;
+const title = serviceHubTitle(service);
+const description = serviceHubDescription(service);
+
+const crumbs = [
+  { name: 'Главная', href: '/' },
+  { name: 'Услуги', href: `/uslugi/${service.slug}/` },
+  { name: service.nameNom, href: path },
+];
+
+// «Выберите город» → 8 гео-страниц этой услуги.
+const cityLinks: LinkCardItem[] = cities.map((c) => ({
+  title: `${service.nameNom} ${c.prep}`,
+  sub: c.region,
+  href: `/${c.slug}/${service.slug}/`,
+  icon: 'pin',
+}));
+
+// Соседние услуги.
+const serviceLinks: LinkCardItem[] = otherServices(service.slug).map((s) => ({
+  title: s.nameNom,
+  sub: s.tagline,
+  href: `/uslugi/${s.slug}/`,
+  icon: s.icon as LinkCardItem['icon'],
+}));
+
+// Релевантные статьи блога по этой услуге.
+const articleLinks: LinkCardItem[] = (
+  await getCollection('blog', ({ data }) => !data.draft && data.relatedService === service.slug)
+)
+  .slice(0, 3)
+  .map((post) => ({ title: post.data.title, sub: 'Статья', href: `/blog/${post.id}/`, icon: 'check' }));
+
+const schemas = [
+  serviceSchema({
+    service,
+    url: path,
+    name: service.nameNom,
+    description: service.answerFirst,
+  }),
+  faqSchema(service.faq),
+  breadcrumbSchema(crumbs),
+];
+---
+
+<Base {title} {description} {path} {schemas}>
+  <Breadcrumbs {crumbs} />
+
+  <PageHero
+    eyebrow="Услуга · 8 городов России"
+    h1={service.nameNom}
+    answer={service.answerFirst}
+    answerLabel={service.nameForUrlTitle}
+  />
+
+  <div class="container hub-body">
+    {
+      service.sections.map((section, i) => (
+        <>
+          {i > 0 && <hr class="hairline" />}
+          <SectionBody section={section} />
+        </>
+      ))
+    }
+    <hr class="hairline" />
+    <FaqList items={service.faq} heading={`Вопросы про ${service.nameForUrlTitle}`} />
+  </div>
+
+  <section class="container section">
+    <LinkCardGrid
+      eyebrow="Выберите город"
+      heading={`${service.nameNom} в вашем городе`}
+      items={cityLinks}
+      columns={2}
+    />
+  </section>
+
+  <CtaSection source={`Хаб услуги: ${service.nameNom}`} heading={`Заказать: ${service.nameForUrlTitle}`} />
+
+  <section class="container section">
+    <LinkCardGrid eyebrow="Другие направления" heading="Смежные услуги" items={serviceLinks} columns={2} />
+    {
+      articleLinks.length > 0 && (
+        <>
+          <div class="hub-articles-gap"></div>
+          <LinkCardGrid eyebrow="Читать по теме" heading="Материалы блога" items={articleLinks} columns={3} />
+        </>
+      )
+    }
+  </section>
+</Base>
+
+<style>
+  .hub-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-12);
+    padding-block: var(--section-y);
+  }
+  .hub-body .hairline {
+    margin: 0;
+  }
+  .hub-articles-gap {
+    height: var(--space-16);
+  }
+</style>

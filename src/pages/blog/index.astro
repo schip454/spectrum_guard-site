@@ -1,0 +1,109 @@
+---
+/**
+ * Лента блога `/blog/`. Опорный слой под проблемные/информационные запросы и E-E-A-T.
+ */
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import PageHero from '../../components/PageHero.astro';
+import Icon from '../../components/icons/Icon.astro';
+import { breadcrumbSchema } from '../../lib/schema';
+
+const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+
+const title = 'Блог Spectrum Guard — личная безопасность и правовые вопросы';
+const description =
+  'Материалы о личной безопасности: что делать при угрозах, как безопасно съехать при ' +
+  'конфликте, как организовать охрану мероприятия и другие практические разборы.';
+
+const crumbs = [
+  { name: 'Главная', href: '/' },
+  { name: 'Блог', href: '/blog/' },
+];
+
+const fmt = new Intl.DateTimeFormat('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
+---
+
+<Base {title} {description} path="/blog/" schemas={[breadcrumbSchema(crumbs)]}>
+  <Breadcrumbs {crumbs} />
+  <PageHero
+    eyebrow="Блог"
+    h1="Безопасность по делу"
+    answer="Практические разборы по личной безопасности и правовым ситуациям: угрозы, переезд при конфликте, соседи, охрана мероприятий. Без воды и запугивания — что и в каком порядке делать."
+  />
+
+  <section class="container section">
+    {
+      posts.length === 0 ? (
+        <p class="blog-empty">Скоро здесь появятся материалы.</p>
+      ) : (
+        <ul class="blog-list">
+          {posts.map((post) => (
+            <li>
+              <a href={`/blog/${post.id}/`} class="post-card perimeter">
+                <p class="post-card__meta mono">
+                  <time datetime={post.data.date.toISOString()}>{fmt.format(post.data.date)}</time>
+                </p>
+                <h2 class="post-card__title">{post.data.title}</h2>
+                <p class="post-card__desc">{post.data.description}</p>
+                <span class="post-card__more mono">
+                  Читать <Icon name="arrow" size={16} class="post-card__arrow" />
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+  </section>
+</Base>
+
+<style>
+  .blog-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: var(--col-gap);
+  }
+  .post-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    height: 100%;
+    padding: var(--space-8) var(--space-6) var(--space-6);
+    border: 1px solid var(--line);
+    background: var(--bg-800);
+    transition: border-color var(--dur) var(--ease), background-color var(--dur) var(--ease);
+  }
+  .post-card:hover {
+    border-color: var(--accent);
+    background: var(--bg-700);
+  }
+  .post-card__meta {
+    color: var(--text-500);
+  }
+  .post-card__title {
+    font-size: var(--fs-h3);
+    color: var(--text-100);
+  }
+  .post-card__desc {
+    color: var(--text-300);
+    font-size: var(--fs-small);
+    flex: 1;
+  }
+  .post-card__more {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    color: var(--accent);
+    text-transform: uppercase;
+  }
+  .post-card:hover .post-card__arrow {
+    transform: translateX(3px);
+    transition: transform var(--dur) var(--ease);
+  }
+  .blog-empty {
+    color: var(--text-300);
+  }
+</style>

@@ -1,0 +1,158 @@
+---
+/**
+ * `/ceny/` — ориентиры или «по запросу» + форма. Без фейковых цифр: честно говорим,
+ * от чего зависит стоимость, и считаем под задачу.
+ */
+import Base from '../layouts/Base.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import PageHero from '../components/PageHero.astro';
+import CtaSection from '../components/CtaSection.astro';
+import Icon from '../components/icons/Icon.astro';
+import type { IconName } from '../components/icons/paths';
+import { services } from '../data/services';
+import { breadcrumbSchema } from '../lib/schema';
+
+const title = 'Цены — Spectrum Guard';
+const description =
+  'Сколько стоят услуги Spectrum Guard: от чего зависит цена и как мы её считаем. Стоимость — ' +
+  'по запросу под конкретную задачу, без скрытых доплат. Оставьте заявку для расчёта.';
+const path = '/ceny/';
+
+const crumbs = [
+  { name: 'Главная', href: '/' },
+  { name: 'Цены', href: path },
+];
+
+// Факторы цены — честные, общие, без выдуманных чисел.
+const factors = [
+  'Формат: разовая смена или постоянный режим',
+  'Число сотрудников под задачу',
+  'Длительность и график',
+  'Логистика и маршрут',
+];
+---
+
+<Base {title} {description} {path} schemas={[breadcrumbSchema(crumbs)]}>
+  <Breadcrumbs {crumbs} />
+
+  <PageHero
+    eyebrow="Цены"
+    h1="Сколько это стоит"
+    answer="Стоимость услуг Spectrum Guard считаем под конкретную задачу — без скрытых доплат. Цена зависит от формата (разовая смена или постоянный режим), числа сотрудников, длительности и логистики. Точную сумму называем после короткого разговора. Оставьте заявку — дадим ориентир по вашей ситуации."
+  />
+
+  <section class="container section ceny">
+    <div class="ceny__factors">
+      <h2>От чего зависит цена</h2>
+      <ul class="ceny__factor-list">
+        {
+          factors.map((f) => (
+            <li>
+              <Icon name="check" size={18} class="ceny__check" />
+              <span>{f}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <div class="ceny__services">
+      <h2>Услуги</h2>
+      <ul class="ceny__service-list">
+        {
+          services.map((s) => (
+            <li class="ceny__service">
+              <div class="ceny__service-head">
+                <Icon name={s.icon as IconName} size={22} class="ceny__service-icon" />
+                <a href={`/uslugi/${s.slug}/`} class="ceny__service-name">{s.nameNom}</a>
+              </div>
+              <p class="ceny__service-sub">{s.tagline}</p>
+              <p class="ceny__price mono">Стоимость по запросу</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <CtaSection
+    source="Страница цен"
+    heading="Рассчитать стоимость"
+    lead="Опишите задачу и город — посчитаем под вашу ситуацию и назовём цену без скрытых доплат."
+  />
+</Base>
+
+<style>
+  .ceny {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr;
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: start;
+  }
+  .ceny h2 {
+    margin-bottom: var(--space-6);
+  }
+  .ceny__factor-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+  .ceny__factor-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    color: var(--text-100);
+  }
+  .ceny__check {
+    color: var(--accent);
+    margin-top: 3px;
+    flex-shrink: 0;
+  }
+  .ceny__service-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--col-gap);
+  }
+  .ceny__service {
+    padding: var(--space-6);
+    border: 1px solid var(--line);
+    background: var(--bg-800);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+  .ceny__service-head {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+  .ceny__service-icon {
+    color: var(--accent);
+  }
+  .ceny__service-name {
+    font-weight: 500;
+    color: var(--text-100);
+  }
+  .ceny__service-name:hover {
+    color: var(--accent);
+  }
+  .ceny__service-sub {
+    color: var(--text-300);
+    font-size: var(--fs-small);
+    flex: 1;
+  }
+  .ceny__price {
+    color: var(--accent);
+    margin-top: var(--space-2);
+  }
+  @media (max-width: 860px) {
+    .ceny {
+      grid-template-columns: 1fr;
+    }
+  }
+  @media (max-width: 520px) {
+    .ceny__service-list {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

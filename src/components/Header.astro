@@ -1,0 +1,214 @@
+---
+/**
+ * Шапка: логотип, навигация, телефон и CTA. Мобильное меню — на нативном
+ * <details> + минимальном JS-улучшении (закрытие по Esc/клику по ссылке).
+ */
+import Logo from './Logo.astro';
+import Icon from './icons/Icon.astro';
+import Button from './Button.astro';
+import { mainNav } from '../data/nav';
+import { contacts, telHref } from '../data/contacts';
+
+const currentPath = Astro.url.pathname;
+const isActive = (href: string) =>
+  href !== '/' && currentPath.startsWith(href.replace(/[^/]+\/$/, '')) && href.length > 1
+    ? currentPath.startsWith(href)
+    : currentPath === href;
+---
+
+<header class="site-header">
+  <div class="container site-header__inner">
+    <Logo />
+
+    <nav class="nav" aria-label="Основная навигация">
+      <ul class="nav__list">
+        {
+          mainNav.map((item) => (
+            <li>
+              <a
+                href={item.href}
+                class:list={['nav__link', { 'is-active': isActive(item.href) }]}
+                aria-current={isActive(item.href) ? 'page' : undefined}
+              >
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="site-header__actions">
+      <a href={telHref} class="site-header__phone mono" aria-label={`Позвонить: ${contacts.phone.display}`}>
+        <Icon name="phone" size={16} />
+        <span>{contacts.phone.display}</span>
+      </a>
+      <Button href="#lead" variant="primary" size="md">Оставить заявку</Button>
+    </div>
+
+    <details class="mobile-menu">
+      <summary class="mobile-menu__toggle" aria-label="Открыть меню">
+        <Icon name="menu" size={24} class="mobile-menu__open" />
+        <Icon name="close" size={24} class="mobile-menu__close" />
+      </summary>
+      <div class="mobile-menu__panel">
+        <ul class="mobile-menu__list">
+          {
+            mainNav.map((item) => (
+              <li>
+                <a href={item.href} class:list={['mobile-menu__link', { 'is-active': isActive(item.href) }]}>
+                  {item.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+        <a href={telHref} class="mobile-menu__phone">
+          <Icon name="phone" size={18} />
+          {contacts.phone.display}
+        </a>
+        <Button href="#lead" variant="primary" size="lg" full>Оставить заявку</Button>
+      </div>
+    </details>
+  </div>
+</header>
+
+<script>
+  // Лёгкое улучшение: закрыть мобильное меню по Esc и по клику на ссылку.
+  const menu = document.querySelector<HTMLDetailsElement>('.mobile-menu');
+  if (menu) {
+    menu.querySelectorAll('a').forEach((a) =>
+      a.addEventListener('click', () => menu.removeAttribute('open'))
+    );
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') menu.removeAttribute('open');
+    });
+  }
+</script>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: var(--z-header);
+    background: color-mix(in srgb, var(--bg-900) 88%, transparent);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--line);
+  }
+  .site-header__inner {
+    display: flex;
+    align-items: center;
+    gap: var(--space-6);
+    min-height: 68px;
+  }
+
+  .nav {
+    margin-inline-start: auto;
+  }
+  .nav__list {
+    display: flex;
+    gap: clamp(0.75rem, 1.6vw, 1.5rem);
+  }
+  .nav__link {
+    font-size: var(--fs-small);
+    color: var(--text-300);
+    padding-block: 0.5rem;
+    border-bottom: 1px solid transparent;
+    transition: color var(--dur) var(--ease), border-color var(--dur) var(--ease);
+  }
+  .nav__link:hover {
+    color: var(--text-100);
+  }
+  .nav__link.is-active {
+    color: var(--text-100);
+    border-bottom-color: var(--accent);
+  }
+
+  .site-header__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+  }
+  .site-header__phone {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    color: var(--text-100);
+    text-transform: none;
+    letter-spacing: 0.02em;
+  }
+  .site-header__phone:hover {
+    color: var(--accent);
+  }
+
+  /* ---------- Мобильное меню ---------- */
+  .mobile-menu {
+    display: none;
+    margin-inline-start: auto;
+  }
+  .mobile-menu__toggle {
+    list-style: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    color: var(--text-100);
+    cursor: pointer;
+  }
+  .mobile-menu__toggle::-webkit-details-marker {
+    display: none;
+  }
+  .mobile-menu__close {
+    display: none;
+  }
+  .mobile-menu[open] .mobile-menu__open {
+    display: none;
+  }
+  .mobile-menu[open] .mobile-menu__close {
+    display: block;
+  }
+  .mobile-menu__panel {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
+    background: var(--bg-800);
+    border-bottom: 1px solid var(--line);
+    padding: var(--space-6) var(--gutter) var(--space-8);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+  .mobile-menu__list {
+    display: flex;
+    flex-direction: column;
+  }
+  .mobile-menu__link {
+    display: block;
+    padding: var(--space-4) 0;
+    border-bottom: 1px solid var(--line);
+    color: var(--text-100);
+    font-size: var(--fs-body);
+  }
+  .mobile-menu__link.is-active {
+    color: var(--accent);
+  }
+  .mobile-menu__phone {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding-block: var(--space-2);
+    color: var(--text-100);
+  }
+
+  @media (max-width: 940px) {
+    .nav,
+    .site-header__actions {
+      display: none;
+    }
+    .mobile-menu {
+      display: block;
+    }
+  }
+</style>

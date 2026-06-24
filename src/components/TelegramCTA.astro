@@ -1,0 +1,19 @@
+---
+/**
+ * Прямая кнопка в Telegram. Та же кнопочная система, без брендовых градиентов.
+ */
+import Button from './Button.astro';
+import { contacts } from '../data/contacts';
+
+interface Props {
+  variant?: 'primary' | 'ghost';
+  size?: 'md' | 'lg';
+  full?: boolean;
+  label?: string;
+}
+const { variant = 'ghost', size = 'lg', full = false, label = 'Написать в Telegram' } = Astro.props;
+---
+
+<Button href={contacts.telegram.url} variant={variant} size={size} full={full} icon="telegram" rel="noopener" target="_blank">
+  {label}
+</Button>

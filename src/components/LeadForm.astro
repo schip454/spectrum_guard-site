@@ -1,0 +1,267 @@
+---
+/**
+ * Форма заявки. Имя + способ связи (телефон/telegram) + суть.
+ * Отправка на бессерверный обработчик (public/api/lead.php) → e-mail + Telegram-бот.
+ * Анти-спам: honeypot-поле + временная метка (без видимой капчи на первом шаге).
+ * Прогрессивное улучшение: без JS форма всё равно отправляется (обработчик отвечает).
+ */
+import Button from './Button.astro';
+
+interface Props {
+  /** Источник заявки — попадёт в письмо/сообщение (напр. «Личная охрана в Москве»). */
+  source?: string;
+  id?: string;
+  compact?: boolean;
+}
+const { source = '', id = 'lead', compact = false } = Astro.props;
+---
+
+<form
+  class:list={['lead-form', { 'lead-form--compact': compact }]}
+  id={id}
+  action="/api/lead.php"
+  method="post"
+  data-lead-form
+>
+  <input type="hidden" name="source" value={source} />
+  {/* honeypot — реальные люди поле не видят и не заполняют */}
+  <div class="lead-form__hp" aria-hidden="true">
+    <label>Компания<input type="text" name="company" tabindex="-1" autocomplete="off" /></label>
+  </div>
+  {/* временная метка для rate-limit на стороне обработчика */}
+  <input type="hidden" name="_ts" value="" data-ts />
+
+  <div class="lead-form__row">
+    <label class="field">
+      <span class="field__label">Как к вам обращаться</span>
+      <input type="text" name="name" required autocomplete="name" placeholder="Имя" />
+    </label>
+  </div>
+
+  <fieldset class="lead-form__row lead-form__contact">
+    <legend class="field__label">Способ связи</legend>
+    <div class="lead-form__method" role="radiogroup">
+      <label class="chip">
+        <input type="radio" name="method" value="phone" checked />
+        <span>Телефон</span>
+      </label>
+      <label class="chip">
+        <input type="radio" name="method" value="telegram" />
+        <span>Telegram</span>
+      </label>
+    </div>
+    <label class="field">
+      <span class="visually-hidden">Контакт для связи</span>
+      <input
+        type="text"
+        name="contact"
+        required
+        inputmode="tel"
+        autocomplete="tel"
+        placeholder="Телефон или @username"
+        aria-label="Телефон или Telegram для связи"
+      />
+    </label>
+  </fieldset>
+
+  <div class="lead-form__row">
+    <label class="field">
+      <span class="field__label">Коротко о ситуации <span class="field__opt">— необязательно</span></span>
+      <textarea name="message" rows={compact ? 2 : 3} placeholder="Что нужно и в каком городе"></textarea>
+    </label>
+  </div>
+
+  <Button type="submit" variant="primary" size="lg" full>Оставить заявку</Button>
+  <p class="lead-form__note mono" data-form-note>
+    Перезвоним или напишем. Работаем в правовом поле, конфиденциально.
+  </p>
+</form>
+
+<div class="lead-toast" data-toast role="status" aria-live="polite" hidden></div>
+
+<script>
+  // Островок: проставляем метку времени, шлём заявку через fetch, показываем тост.
+  document.querySelectorAll<HTMLFormElement>('[data-lead-form]').forEach((form) => {
+    const tsField = form.querySelector<HTMLInputElement>('[data-ts]');
+    if (tsField) tsField.value = String(Date.now());
+
+    const methodRadios = form.querySelectorAll<HTMLInputElement>('input[name="method"]');
+    const contact = form.querySelector<HTMLInputElement>('input[name="contact"]');
+    methodRadios.forEach((r) =>
+      r.addEventListener('change', () => {
+        if (!contact) return;
+        if (r.value === 'telegram' && r.checked) {
+          contact.placeholder = '@username или ссылка t.me';
+          contact.inputMode = 'text';
+        } else if (r.checked) {
+          contact.placeholder = 'Телефон или @username';
+          contact.inputMode = 'tel';
+        }
+      })
+    );
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+      const toast = document.querySelector<HTMLElement>('[data-toast]');
+      if (btn) {
+        btn.disabled = true;
+        btn.dataset.label = btn.textContent ?? '';
+        btn.textContent = 'Отправляем…';
+      }
+      try {
+        const res = await fetch(form.action, { method: 'POST', body: new FormData(form) });
+        if (!res.ok) throw new Error('bad status');
+        form.reset();
+        if (tsField) tsField.value = String(Date.now());
+        showToast('Заявка отправлена. Скоро свяжемся.', true);
+      } catch {
+        showToast('Не удалось отправить. Позвоните или напишите в Telegram.', false);
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = btn.dataset.label || 'Оставить заявку';
+        }
+      }
+
+      function showToast(msg: string, ok: boolean) {
+        if (!toast) return;
+        toast.textContent = msg;
+        toast.dataset.ok = String(ok);
+        toast.hidden = false;
+        toast.classList.add('is-visible');
+        window.setTimeout(() => {
+          toast.classList.remove('is-visible');
+          window.setTimeout(() => (toast.hidden = true), 300);
+        }, 5000);
+      }
+    });
+  });
+</script>
+
+<style>
+  .lead-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5, 1.25rem);
+  }
+  .lead-form__row {
+    border: 0;
+    padding: 0;
+    margin: 0;
+  }
+  .lead-form__hp {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+  .field__label {
+    font-size: var(--fs-small);
+    color: var(--text-300);
+  }
+  .field__opt {
+    color: var(--text-500);
+  }
+  input[type='text'],
+  input[type='tel'],
+  textarea {
+    width: 100%;
+    background: var(--bg-900);
+    border: 1px solid var(--line-2);
+    border-radius: var(--radius);
+    padding: 0.8rem 0.95rem;
+    color: var(--text-100);
+    font-size: var(--fs-body);
+    transition: border-color var(--dur) var(--ease);
+  }
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--text-500);
+  }
+  input:focus,
+  textarea:focus {
+    border-color: var(--accent);
+    outline: none;
+  }
+  textarea {
+    resize: vertical;
+    min-height: 3rem;
+  }
+
+  .lead-form__contact {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+  .lead-form__method {
+    display: flex;
+    gap: var(--space-3);
+  }
+  .chip {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--line-2);
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-size: var(--fs-small);
+    color: var(--text-300);
+    transition: border-color var(--dur) var(--ease), color var(--dur) var(--ease);
+  }
+  .chip input {
+    position: absolute;
+    opacity: 0;
+    inset: 0;
+    cursor: pointer;
+  }
+  .chip:has(input:checked) {
+    border-color: var(--accent);
+    color: var(--text-100);
+  }
+  .chip:has(input:focus-visible) {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .lead-form__note {
+    color: var(--text-500);
+    text-transform: none;
+    letter-spacing: 0.01em;
+    text-align: center;
+  }
+
+  /* Тост */
+  .lead-toast {
+    position: fixed;
+    left: 50%;
+    bottom: var(--space-8);
+    transform: translate(-50%, 1rem);
+    z-index: var(--z-toast);
+    max-width: min(92vw, 420px);
+    padding: var(--space-4) var(--space-6);
+    background: var(--bg-700);
+    border: 1px solid var(--line-2);
+    border-left: 3px solid var(--ok);
+    border-radius: var(--radius);
+    color: var(--text-100);
+    font-size: var(--fs-small);
+    opacity: 0;
+    transition: opacity var(--dur) var(--ease), transform var(--dur) var(--ease);
+  }
+  .lead-toast[data-ok='false'] {
+    border-left-color: var(--danger);
+  }
+  .lead-toast.is-visible {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+</style>

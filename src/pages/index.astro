@@ -1,0 +1,139 @@
+---
+/**
+ * Главная `/`. Hero (5 интент-карточек) + индексируемый смысловой блок: Answer-First
+ * о компании, услуги, география (8 городов), почему мы, CTA.
+ * Schema: Organization (сайтово через Base, areaServed = все города). Без хлебных крошек.
+ */
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import AnswerFirst from '../components/AnswerFirst.astro';
+import LinkCardGrid from '../components/LinkCardGrid.astro';
+import type { LinkCardItem } from '../components/LinkCardGrid.astro';
+import CtaSection from '../components/CtaSection.astro';
+import Icon from '../components/icons/Icon.astro';
+import { services } from '../data/services';
+import { cities } from '../data/cities';
+
+const title = 'Spectrum Guard — охрана и личная безопасность в 8 городах России';
+const description =
+  'Spectrum Guard — охранное агентство: личная охрана, защита при угрозах, охрана при ' +
+  'переезде, помощь при конфликте с соседями и охрана мероприятий. Работаем в Москве, ' +
+  'Санкт-Петербурге, Екатеринбурге, Уфе, Челябинске, Перми, Тюмени и Новосибирске. ' +
+  'Оставьте заявку или напишите в Telegram.';
+
+const serviceLinks: LinkCardItem[] = services.map((s) => ({
+  title: s.nameNom,
+  sub: s.tagline,
+  href: `/uslugi/${s.slug}/`,
+  icon: s.icon as LinkCardItem['icon'],
+}));
+
+const cityLinks: LinkCardItem[] = cities.map((c) => ({
+  title: c.nom,
+  sub: c.region,
+  href: `/${c.slug}/`,
+  icon: 'pin',
+}));
+
+const why = [
+  {
+    icon: 'guard' as const,
+    title: 'В правовом поле',
+    text: 'Обеспечиваем безопасность и фиксируем факты, но не давим на третьих лиц. Защита, а не самосуд.',
+  },
+  {
+    icon: 'threat' as const,
+    title: 'Конфиденциально',
+    text: 'Детали задачи и данные клиента не разглашаем. Работаем дискретно — без лишнего внимания.',
+  },
+  {
+    icon: 'pin' as const,
+    title: 'Выезд по 8 городам',
+    text: 'Москва, Санкт-Петербург, Екатеринбург, Уфа, Челябинск, Пермь, Тюмень, Новосибирск. Маршрут — заранее.',
+  },
+  {
+    icon: 'clock' as const,
+    title: 'Заявки 24/7',
+    text: 'Три способа связи: форма, Telegram, обратный звонок. Перезвоним или ответим в мессенджере.',
+  },
+];
+---
+
+<Base {title} {description} path="/">
+  <Hero />
+
+  <section class="section container" aria-labelledby="about-heading">
+    <p class="eyebrow">О компании</p>
+    <h2 id="about-heading" class="home-h2">Охрана под конкретную задачу — от разовой смены до постоянного режима</h2>
+    <AnswerFirst
+      text="Spectrum Guard — охранное агентство для частных клиентов и бизнеса. Помогаем там, где нужна безопасность человека: личная охрана и сопровождение, защита при угрозах, спокойный переезд при конфликте, помощь с соседями и охрана мероприятий. Работаем в восьми городах России выездным форматом, в правовом поле и конфиденциально. Оставьте заявку — подберём формат под вашу ситуацию."
+    />
+  </section>
+
+  <section class="section container" aria-labelledby="services-heading">
+    <LinkCardGrid eyebrow="Что мы делаем" heading="Пять направлений" items={serviceLinks} columns={3} />
+    <p id="services-heading" class="visually-hidden">Услуги Spectrum Guard</p>
+  </section>
+
+  <section class="section container" aria-labelledby="why-heading">
+    <p class="eyebrow">Почему Spectrum Guard</p>
+    <h2 id="why-heading" class="home-h2">Спокойно, по делу, без пафоса</h2>
+    <ul class="why">
+      {
+        why.map((w) => (
+          <li class="why__item perimeter">
+            <Icon name={w.icon} size={28} class="why__icon" />
+            <h3 class="why__title">{w.title}</h3>
+            <p class="why__text">{w.text}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section class="section container" aria-labelledby="geo-heading">
+    <LinkCardGrid eyebrow="География" heading="8 городов России" items={cityLinks} columns={4} />
+    <p id="geo-heading" class="visually-hidden">Города, где работает Spectrum Guard</p>
+  </section>
+
+  <CtaSection source="Главная страница" />
+</Base>
+
+<style>
+  .home-h2 {
+    max-width: 24ch;
+    margin: var(--space-2) 0 var(--space-6);
+  }
+  .why {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--col-gap);
+    margin-top: var(--space-6);
+  }
+  .why__item {
+    padding: var(--space-6);
+    border: 1px solid var(--line);
+    background: var(--bg-800);
+  }
+  .why__icon {
+    color: var(--accent);
+    margin-bottom: var(--space-4);
+  }
+  .why__title {
+    margin-bottom: var(--space-2);
+  }
+  .why__text {
+    color: var(--text-300);
+    font-size: var(--fs-small);
+  }
+  @media (max-width: 900px) {
+    .why {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 480px) {
+    .why {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

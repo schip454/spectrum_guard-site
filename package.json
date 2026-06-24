@@ -1,0 +1,26 @@
+{
+  "name": "spectrum-guard-site",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Spectrum Guard — лид-ген сайт охранного агентства (Astro SSG)",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "gen:assets": "node scripts/gen-assets.mjs",
+    "prebuild": "node scripts/gen-assets.mjs",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "check": "astro check"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.2.1",
+    "astro": "^5.18.2",
+    "sharp": "^0.33.5"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.9",
+    "typescript": "^5.7.3"
+  }
+}

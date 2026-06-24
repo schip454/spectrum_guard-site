@@ -1,0 +1,160 @@
+---
+/**
+ * `/o-kompanii/` — о Spectrum Guard, принципы, география. Слот трастового блока (за
+ * флагом). Без выдуманных фактов и без упоминания, что лицензия «будет позже».
+ */
+import Base from '../layouts/Base.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import PageHero from '../components/PageHero.astro';
+import LinkCardGrid from '../components/LinkCardGrid.astro';
+import type { LinkCardItem } from '../components/LinkCardGrid.astro';
+import TrustBlock from '../components/TrustBlock.astro';
+import CtaSection from '../components/CtaSection.astro';
+import Icon from '../components/icons/Icon.astro';
+import { services } from '../data/services';
+import { cities } from '../data/cities';
+import { breadcrumbSchema } from '../lib/schema';
+
+const title = 'О компании — Spectrum Guard';
+const description =
+  'Spectrum Guard — охранное агентство для частных клиентов и бизнеса. Принципы: работа в ' +
+  'правовом поле, конфиденциальность, выезд по 8 городам России. Как мы работаем и чем помогаем.';
+const path = '/o-kompanii/';
+
+const crumbs = [
+  { name: 'Главная', href: '/' },
+  { name: 'О компании', href: path },
+];
+
+const serviceLinks: LinkCardItem[] = services.map((s) => ({
+  title: s.nameNom,
+  sub: s.tagline,
+  href: `/uslugi/${s.slug}/`,
+  icon: s.icon as LinkCardItem['icon'],
+}));
+
+const principles = [
+  {
+    icon: 'guard' as const,
+    title: 'Закон выше эмоций',
+    text:
+      'Мы обеспечиваем безопасность и фиксируем происходящее, помогаем довести дело до полиции ' +
+      'или суда. Мы не давим на третьих лиц и не участвуем в самосуде.',
+  },
+  {
+    icon: 'threat' as const,
+    title: 'Конфиденциальность',
+    text: 'Детали задачи и данные клиента не разглашаем. Работаем дискретно, без лишнего внимания.',
+  },
+  {
+    icon: 'check' as const,
+    title: 'Честность об ограничениях',
+    text:
+      'Берём задачу, когда уверены, что поможем. Если что-то вне нашей компетенции — говорим прямо ' +
+      'и подсказываем, куда обратиться.',
+  },
+];
+---
+
+<Base {title} {description} {path} schemas={[breadcrumbSchema(crumbs)]}>
+  <Breadcrumbs {crumbs} />
+
+  <PageHero
+    eyebrow="О компании"
+    h1="Spectrum Guard"
+    answer="Spectrum Guard — охранное агентство для частных клиентов и бизнеса. Помогаем там, где нужна безопасность человека: личная охрана, защита при угрозах, спокойный переезд при конфликте, помощь с соседями и охрана мероприятий. Работаем в восьми городах России выездным форматом, в правовом поле и конфиденциально."
+  />
+
+  <section class="container section about">
+    <div class="about__prose flow">
+      <h2>Как мы работаем</h2>
+      <p>
+        Мы подбираем формат под конкретную ситуацию — от разовой смены до постоянного режима.
+        Сначала короткий разговор: что происходит, какие риски, что нужно. Затем согласуем план,
+        состав и стоимость — без скрытых доплат. Дальше работаем по плану и корректируем по ходу.
+      </p>
+      <p>
+        У нас нет городских номеров и публичных адресов — обслуживание выездное по согласованному
+        маршруту. Это решение в пользу дискретности: мы приезжаем туда и тогда, где и когда нужно вам.
+      </p>
+    </div>
+
+    <ul class="principles">
+      {
+        principles.map((p) => (
+          <li class="principles__item perimeter">
+            <Icon name={p.icon} size={28} class="principles__icon" />
+            <h3>{p.title}</h3>
+            <p>{p.text}</p>
+          </li>
+        ))
+      }
+    </ul>
+
+    <div class="about__geo">
+      <h2>География</h2>
+      <p class="about__geo-text">
+        Работаем в {cities.length} городах России: {cities.map((c) => c.nom).join(', ')}.
+        Екатеринбург — опорный город. В остальных — выездной формат по согласованному маршруту.
+      </p>
+    </div>
+
+    <TrustBlock />
+  </section>
+
+  <section class="container section">
+    <LinkCardGrid eyebrow="Направления" heading="Чем помогаем" items={serviceLinks} columns={3} />
+  </section>
+
+  <CtaSection source="О компании" />
+</Base>
+
+<style>
+  .about {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-12);
+  }
+  .about__prose {
+    max-width: 70ch;
+  }
+  .about__prose h2 {
+    margin-bottom: var(--space-4);
+  }
+  .about__prose p {
+    color: var(--text-300);
+  }
+  .principles {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--col-gap);
+  }
+  .principles__item {
+    padding: var(--space-6);
+    border: 1px solid var(--line);
+    background: var(--bg-800);
+  }
+  .principles__icon {
+    color: var(--accent);
+    margin-bottom: var(--space-4);
+  }
+  .principles__item h3 {
+    margin-bottom: var(--space-2);
+  }
+  .principles__item p {
+    color: var(--text-300);
+    font-size: var(--fs-small);
+  }
+  .about__geo h2 {
+    margin-bottom: var(--space-3);
+  }
+  .about__geo-text {
+    max-width: 70ch;
+    color: var(--text-300);
+  }
+  @media (max-width: 760px) {
+    .principles {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

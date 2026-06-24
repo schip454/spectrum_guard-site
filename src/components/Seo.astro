@@ -1,0 +1,80 @@
+---
+/**
+ * Единый <head>-компонент: title, description, canonical, og, twitter, JSON-LD,
+ * шрифты. Используется только внутри Base.astro.
+ */
+import { SITE_NAME, SITE_URL } from '../config';
+
+interface Props {
+  title: string;
+  description: string;
+  /** Путь страницы для canonical (берём из Astro.url, если не задан). */
+  path?: string;
+  /** og:image — абсолютный или относительный путь. */
+  image?: string;
+  ogType?: 'website' | 'article';
+  /** Готовый JSON-LD граф (или массив графов). */
+  jsonLd?: object | object[];
+  noindex?: boolean;
+}
+
+const {
+  title,
+  description,
+  path,
+  image = '/og-default.png',
+  ogType = 'website',
+  jsonLd,
+  noindex = false,
+} = Astro.props;
+
+const canonical = new URL(path ?? Astro.url.pathname, SITE_URL).href;
+const ogImage = new URL(image, SITE_URL).href;
+const jsonLdList = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
+---
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>{title}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+{noindex && <meta name="robots" content="noindex, nofollow" />}
+
+<meta name="theme-color" content="#0B0D10" />
+<meta name="generator" content={Astro.generator} />
+
+{/* Open Graph */}
+<meta property="og:type" content={ogType} />
+<meta property="og:site_name" content={SITE_NAME} />
+<meta property="og:locale" content="ru_RU" />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={ogImage} />
+
+{/* Twitter */}
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={ogImage} />
+
+{/* Иконки */}
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+<link rel="manifest" href="/site.webmanifest" />
+
+{/* Шрифты: preconnect + один stylesheet, subset cyrillic, display=swap */}
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  rel="stylesheet"
+  href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700&family=Russo+One&family=Ubuntu+Mono&display=swap&subset=cyrillic,latin"
+/>
+
+{/* JSON-LD */}
+{
+  jsonLdList.map((node) => (
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(node)} />
+  ))
+}

@@ -1,0 +1,17 @@
+# build output
+dist/
+# generated types
+.astro/
+# dependencies
+node_modules/
+# logs
+npm-debug.log*
+# environment
+.env
+.env.production
+# серверные секреты обработчика заявок (загружаются на хостинг вручную)
+lead.config.php
+**/lead.config.php
+# os
+.DS_Store
+Thumbs.db

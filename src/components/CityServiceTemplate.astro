@@ -1,0 +1,113 @@
+---
+/**
+ * Тело страницы «услуга × город». DRY-шаблон: данные из services.ts × cities.ts.
+ * Секции: Answer-First · что входит · как проходит · кому подходит · цена ·
+ * локальный блок · FAQ · перелинковка · CTA. Контент уникален по городам.
+ */
+import PageHero from './PageHero.astro';
+import SectionBody from './SectionBody.astro';
+import LocalBlock from './LocalBlock.astro';
+import FaqList from './FaqList.astro';
+import LinkCardGrid from './LinkCardGrid.astro';
+import type { LinkCardItem } from './LinkCardGrid.astro';
+import CtaSection from './CtaSection.astro';
+import { geoH1, geoAnswerFirst } from '../lib/content';
+import { otherServices } from '../data/services';
+import { otherCities } from '../data/cities';
+import type { City, Service } from '../data/types';
+
+interface Props {
+  city: City;
+  service: Service;
+  /** Релевантные статьи блога (1–2). Подключаются, когда блог наполнен. */
+  relatedArticles?: LinkCardItem[];
+}
+const { city, service, relatedArticles = [] } = Astro.props;
+
+const h1 = geoH1(service, city);
+const answer = geoAnswerFirst(service, city);
+
+// Перелинковка: другие услуги в этом городе.
+const servicesInCity: LinkCardItem[] = otherServices(service.slug).map((s) => ({
+  title: s.nameNom,
+  sub: s.tagline,
+  href: `/${city.slug}/${s.slug}/`,
+  icon: s.icon as LinkCardItem['icon'],
+}));
+
+// Эта же услуга в соседних городах (переключатель города).
+const serviceInCities: LinkCardItem[] = otherCities(city.slug).map((c) => ({
+  title: `${service.nameNom} ${c.prep}`,
+  sub: c.region,
+  href: `/${c.slug}/${service.slug}/`,
+  icon: 'pin',
+}));
+---
+
+<PageHero
+  eyebrow={`${city.nom} · ${city.region}`}
+  h1={h1}
+  answer={answer}
+  answerLabel={`${service.nameForUrlTitle} · ${city.nom}`}
+/>
+
+<div class="container svc-body">
+  {
+    service.sections.map((section, i) => (
+      <>
+        {i > 0 && <hr class="hairline" />}
+        <SectionBody section={section} />
+      </>
+    ))
+  }
+
+  <hr class="hairline" />
+  <LocalBlock city={city} serviceNom={service.nameNom} />
+
+  <hr class="hairline" />
+  <FaqList items={service.faq} heading={`Вопросы про ${service.nameForUrlTitle} ${city.prep}`} />
+</div>
+
+<CtaSection
+  source={`${service.nameNom} ${city.prep}`}
+  heading={`Заказать: ${service.nameForUrlTitle} ${city.prep}`}
+/>
+
+<div class="container svc-links section">
+  <LinkCardGrid
+    eyebrow="Ещё в этом городе"
+    heading={`Другие услуги ${city.prep}`}
+    items={servicesInCity}
+    columns={2}
+  />
+  <div class="svc-links__gap"></div>
+  <LinkCardGrid
+    eyebrow="Тот же запрос в других городах"
+    heading={`${service.nameNom} в других городах`}
+    items={serviceInCities}
+    columns={3}
+  />
+  {
+    relatedArticles.length > 0 && (
+      <>
+        <div class="svc-links__gap"></div>
+        <LinkCardGrid eyebrow="Читать по теме" heading="Полезные материалы" items={relatedArticles} columns={2} />
+      </>
+    )
+  }
+</div>
+
+<style>
+  .svc-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-12);
+    padding-block: var(--section-y);
+  }
+  .svc-body .hairline {
+    margin: 0;
+  }
+  .svc-links__gap {
+    height: var(--space-16);
+  }
+</style>

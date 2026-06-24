@@ -1,0 +1,14 @@
+{
+  "name": "Spectrum Guard",
+  "short_name": "Spectrum Guard",
+  "description": "Охрана и личная безопасность в 8 городах России",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0B0D10",
+  "theme_color": "#0B0D10",
+  "lang": "ru",
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

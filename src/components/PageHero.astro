@@ -1,0 +1,47 @@
+---
+/**
+ * Внутренний заголовок страницы (не главный герой). H1 + Answer-First врезка,
+ * сигнатурные угловые засечки. Без тяжёлого фона — глубина через слои и хайрлайны.
+ */
+import AnswerFirst from './AnswerFirst.astro';
+
+interface Props {
+  eyebrow?: string;
+  h1: string;
+  answer?: string;
+  /** Моно-метка над врезкой (код города/услуга). */
+  answerLabel?: string;
+}
+const { eyebrow, h1, answer, answerLabel } = Astro.props;
+---
+
+<header class="page-hero">
+  <div class="container">
+    <div class="page-hero__inner perimeter">
+      {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+      <h1>{h1}</h1>
+      {answer && <AnswerFirst text={answer} label={answerLabel} />}
+    </div>
+  </div>
+</header>
+
+<style>
+  .page-hero {
+    padding-block: var(--space-16) var(--space-12);
+    border-bottom: 1px solid var(--line);
+    background:
+      radial-gradient(120% 80% at 0% 0%, rgba(195, 154, 85, 0.05), transparent 60%),
+      var(--bg-900);
+  }
+  .page-hero__inner {
+    padding-top: var(--space-2);
+    padding-left: var(--space-4);
+  }
+  .page-hero h1 {
+    max-width: 22ch;
+    margin: var(--space-3) 0 var(--space-6);
+  }
+  .page-hero .eyebrow {
+    color: var(--accent);
+  }
+</style>

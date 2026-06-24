@@ -1,0 +1,9 @@
+# Spectrum Guard — robots.txt
+# Открываем сайт для индексации, закрываем только служебное.
+
+User-agent: *
+Allow: /
+Disallow: /api/
+
+# Карта сайта (генерируется @astrojs/sitemap при сборке).
+Sitemap: https://spectrumguard.ru/sitemap-index.xml

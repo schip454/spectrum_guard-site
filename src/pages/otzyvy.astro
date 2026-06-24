@@ -1,0 +1,106 @@
+---
+/**
+ * `/otzyvy/` — реальные отзывы. Пока контента нет (REVIEWS_ENABLED=false): показываем
+ * честное состояние и приглашение оставить отзыв, без выдуманных отзывов и без
+ * AggregateRating. Schema Review/AggregateRating подключим строго по факту.
+ */
+import Base from '../layouts/Base.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import PageHero from '../components/PageHero.astro';
+import CtaSection from '../components/CtaSection.astro';
+import { reviews } from '../data/reviews';
+import { REVIEWS_ENABLED } from '../config';
+import { breadcrumbSchema } from '../lib/schema';
+
+const title = 'Отзывы — Spectrum Guard';
+const description =
+  'Отзывы клиентов Spectrum Guard. Делимся реальным опытом работы. Оставьте заявку или ' +
+  'напишите в Telegram — поможем с личной безопасностью в правовом поле.';
+const path = '/otzyvy/';
+
+const crumbs = [
+  { name: 'Главная', href: '/' },
+  { name: 'Отзывы', href: path },
+];
+
+const showReviews = REVIEWS_ENABLED && reviews.length > 0;
+const fmt = new Intl.DateTimeFormat('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
+---
+
+<Base {title} {description} {path} schemas={[breadcrumbSchema(crumbs)]}>
+  <Breadcrumbs {crumbs} />
+
+  <PageHero
+    eyebrow="Отзывы"
+    h1="Что говорят клиенты"
+    answer="Здесь — реальные отзывы о работе Spectrum Guard. Мы публикуем их по согласию клиентов и обезличенно, где это нужно для конфиденциальности. Хотите поделиться опытом или задать вопрос — напишите нам в Telegram или оставьте заявку."
+  />
+
+  <section class="container section">
+    {
+      showReviews ? (
+        <ul class="reviews">
+          {reviews.map((r) => (
+            <li class="review perimeter">
+              <p class="review__text">{r.text}</p>
+              <p class="review__author mono">
+                {r.author}
+                {r.city ? ` · ${r.city}` : ''}
+                {r.date ? ` · ${fmt.format(new Date(r.date))}` : ''}
+              </p>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <div class="reviews-empty perimeter">
+          {/* TODO:CONTENT — реальные отзывы; включить REVIEWS_ENABLED, когда поступят */}
+          <p class="reviews-empty__lead">
+            Мы собираем отзывы клиентов и публикуем их по согласию. Если вы уже работали с нами —
+            будем благодарны за обратную связь в Telegram.
+          </p>
+          <p class="reviews-empty__sub">
+            А если только выбираете — оставьте заявку, ответим на вопросы и расскажем, как работаем.
+          </p>
+        </div>
+      )
+    }
+  </section>
+
+  <CtaSection source="Страница отзывов" heading="Остались вопросы?" />
+</Base>
+
+<style>
+  .reviews {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: var(--col-gap);
+  }
+  .review {
+    padding: var(--space-8) var(--space-6) var(--space-6);
+    border: 1px solid var(--line);
+    background: var(--bg-800);
+  }
+  .review__text {
+    color: var(--text-100);
+  }
+  .review__author {
+    margin-top: var(--space-4);
+    color: var(--text-500);
+  }
+  .reviews-empty {
+    max-width: 64ch;
+    padding: clamp(1.5rem, 4vw, 2.5rem);
+    border: 1px solid var(--line);
+    border-left: 2px solid var(--accent);
+    background: var(--bg-800);
+  }
+  .reviews-empty__lead {
+    color: var(--text-100);
+    font-size: var(--fs-h3);
+    line-height: 1.5;
+  }
+  .reviews-empty__sub {
+    color: var(--text-300);
+    margin-top: var(--space-4);
+  }
+</style>

@@ -1,0 +1,47 @@
+---
+/**
+ * Кастомные SVG-иконки проекта (НЕ icon-пак).
+ * Однообводочные, толщина штриха 1.5px, сетка 24px, «технический» характер под сигнатуру.
+ * Декоративные — aria-hidden; со смыслом — передать title (тогда role="img").
+ */
+import { paths, type IconName } from './paths';
+
+interface Props {
+  name: IconName;
+  size?: number;
+  /** Доступное имя; если задано — иконка не декоративная. */
+  title?: string;
+  class?: string;
+  strokeWidth?: number;
+}
+
+const { name, size = 24, title, class: className, strokeWidth = 1.5 } = Astro.props;
+const d = paths[name];
+const a11y = title
+  ? ({ role: 'img', 'aria-label': title } as const)
+  : ({ 'aria-hidden': 'true', focusable: 'false' } as const);
+---
+
+<svg
+  class:list={['icon', className]}
+  width={size}
+  height={size}
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width={strokeWidth}
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  {...a11y}
+>
+  {title && <title>{title}</title>}
+  <Fragment set:html={d} />
+</svg>
+
+<style>
+  .icon {
+    display: inline-block;
+    vertical-align: middle;
+    flex-shrink: 0;
+  }
+</style>

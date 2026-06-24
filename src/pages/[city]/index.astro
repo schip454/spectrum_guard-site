@@ -1,0 +1,103 @@
+---
+/**
+ * Хаб города `/{city}/` — общий интент «охрана {город}» + витрина всех услуг в городе.
+ * 8 страниц. Schema: Service (areaServed = город, без адреса) + FAQPage + Breadcrumb.
+ */
+import Base from '../../layouts/Base.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import PageHero from '../../components/PageHero.astro';
+import LinkCardGrid from '../../components/LinkCardGrid.astro';
+import type { LinkCardItem } from '../../components/LinkCardGrid.astro';
+import LocalBlock from '../../components/LocalBlock.astro';
+import FaqList from '../../components/FaqList.astro';
+import CtaSection from '../../components/CtaSection.astro';
+import { cities, otherCities } from '../../data/cities';
+import { services } from '../../data/services';
+import {
+  cityHubH1,
+  cityHubTitle,
+  cityHubDescription,
+  cityHubAnswerFirst,
+  cityFaq,
+} from '../../lib/content';
+import { cityHubSchema, faqSchema, breadcrumbSchema } from '../../lib/schema';
+import type { City } from '../../data/types';
+
+export function getStaticPaths() {
+  return cities.map((city) => ({
+    params: { city: city.slug },
+    props: { city },
+  }));
+}
+
+interface Props {
+  city: City;
+}
+const { city } = Astro.props as Props;
+
+const path = `/${city.slug}/`;
+const title = cityHubTitle(city);
+const description = cityHubDescription(city);
+const faq = cityFaq(city);
+
+const crumbs = [
+  { name: 'Главная', href: '/' },
+  { name: city.nom, href: path },
+];
+
+// 5 услуг в этом городе.
+const serviceLinks: LinkCardItem[] = services.map((s) => ({
+  title: `${s.nameNom} ${city.prep}`,
+  sub: s.tagline,
+  href: `/${city.slug}/${s.slug}/`,
+  icon: s.icon as LinkCardItem['icon'],
+}));
+
+// Соседние города (переключатель).
+const cityLinks: LinkCardItem[] = otherCities(city.slug).map((c) => ({
+  title: c.nom,
+  sub: c.region,
+  href: `/${c.slug}/`,
+  icon: 'pin',
+}));
+
+const schemas = [
+  cityHubSchema({ city, url: path, description: cityHubAnswerFirst(city) }),
+  faqSchema(faq),
+  breadcrumbSchema(crumbs),
+];
+---
+
+<Base {title} {description} {path} {schemas}>
+  <Breadcrumbs {crumbs} />
+
+  <PageHero
+    eyebrow={`${city.nom} · ${city.region}`}
+    h1={cityHubH1(city)}
+    answer={cityHubAnswerFirst(city)}
+    answerLabel={`охрана · ${city.nom}`}
+  />
+
+  <section class="container section">
+    <LinkCardGrid
+      eyebrow="Направления"
+      heading={`Услуги ${city.prep}`}
+      items={serviceLinks}
+      columns={2}
+    />
+  </section>
+
+  <section class="container">
+    <LocalBlock {city} serviceNom="Охрана и сопровождение" />
+  </section>
+
+  <section class="container section">
+    <FaqList items={faq} heading={`Вопросы об охране ${city.prep}`} />
+  </section>
+
+  <CtaSection source={`Хаб города: ${city.nom}`} heading={`Оставьте заявку — ${city.nom}`} />
+
+  <section class="container section">
+    <LinkCardGrid eyebrow="География" heading="Другие города" items={cityLinks} columns={3} />
+  </section>
+</Base>
