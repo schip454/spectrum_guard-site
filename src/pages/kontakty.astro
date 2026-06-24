@@ -8,6 +8,7 @@ import Breadcrumbs from '../components/Breadcrumbs.astro';
 import PageHero from '../components/PageHero.astro';
 import LeadForm from '../components/LeadForm.astro';
 import TelegramCTA from '../components/TelegramCTA.astro';
+import CallbackCTA from '../components/CallbackCTA.astro';
 import Icon from '../components/icons/Icon.astro';
 import { contacts, telHref } from '../data/contacts';
 import { cities } from '../data/cities';
@@ -77,6 +78,11 @@ const crumbs = [
       <div class="contacts__tg">
         <TelegramCTA variant="ghost" size="lg" full />
       </div>
+
+      <div class="contacts__callback">
+        <p class="contacts__label mono">Заказать обратный звонок</p>
+        <CallbackCTA source="Страница контактов" />
+      </div>
     </div>
 
     <div class="contacts__form perimeter perimeter--full">
@@ -141,6 +147,13 @@ const crumbs = [
   .contacts__tg {
     margin-top: var(--space-6);
     max-width: 320px;
+  }
+  .contacts__callback {
+    margin-top: var(--space-6);
+    max-width: 360px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
   }
   .contacts__form {
     padding: clamp(1.5rem, 4vw, 2.5rem);

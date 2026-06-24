@@ -27,6 +27,9 @@ const { city, service, relatedArticles = [] } = Astro.props;
 const h1 = geoH1(service, city);
 const answer = geoAnswerFirst(service, city);
 
+// Кадр героя: для городов с фактурой — местный, иначе — кадр услуги (нейтральный).
+const heroImage = city.hasLocalProof ? city.heroImage : service.heroImage;
+
 // Перелинковка: другие услуги в этом городе.
 const servicesInCity: LinkCardItem[] = otherServices(service.slug).map((s) => ({
   title: s.nameNom,
@@ -49,6 +52,8 @@ const serviceInCities: LinkCardItem[] = otherCities(city.slug).map((c) => ({
   h1={h1}
   answer={answer}
   answerLabel={`${service.nameForUrlTitle} · ${city.nom}`}
+  image={heroImage}
+  imageAlt={h1}
 />
 
 <div class="container svc-body">

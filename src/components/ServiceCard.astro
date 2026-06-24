@@ -1,0 +1,142 @@
+---
+/**
+ * Карточка услуги с реальным кадром: изображение сверху, кастомный мини-знак, название
+ * и короткий подзаголовок, hover — подсветка границы латунью + сдвиг стрелки.
+ * Единый «сильный» блок услуг (см. правки → пункты 2 и 4: без дублирующих блоков).
+ */
+import Media from './Media.astro';
+import Icon from './icons/Icon.astro';
+import type { IconName } from './icons/paths';
+
+interface Props {
+  label: string;
+  sub: string;
+  href: string;
+  icon: IconName;
+  image?: string;
+  index: number;
+}
+const { label, sub, href, icon, image, index } = Astro.props;
+---
+
+<a href={href} class="service-card reveal">
+  <span class="service-card__media">
+    {
+      image && (
+        <Media
+          src={image}
+          alt={label}
+          sizes="(max-width: 720px) 100vw, (max-width: 1100px) 50vw, 20vw"
+          widths={[320, 480, 768]}
+          loading="lazy"
+        />
+      )
+    }
+    <span class="service-card__icon" aria-hidden="true">
+      <Icon name={icon} size={22} />
+    </span>
+    <span class="service-card__n mono">{String(index).padStart(2, '0')}</span>
+  </span>
+  <span class="service-card__body">
+    <span class="service-card__label">{label}</span>
+    <span class="service-card__sub">{sub}</span>
+    <span class="service-card__cta mono">
+      Подробнее <Icon name="arrow" size={16} class="service-card__arrow" />
+    </span>
+  </span>
+</a>
+
+<style>
+  .service-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--bg-800);
+    overflow: hidden;
+    transition: border-color var(--dur) var(--ease), transform var(--dur) var(--ease);
+  }
+  .service-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-3px);
+  }
+  .service-card__media {
+    position: relative;
+    display: block;
+    aspect-ratio: 4 / 3;
+    background: var(--bg-700);
+    overflow: hidden;
+  }
+  .service-card__media :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s var(--ease), filter var(--dur) var(--ease);
+  }
+  .service-card:hover .service-card__media :global(img) {
+    transform: scale(1.04);
+  }
+  .service-card__media::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(11, 13, 16, 0.1), rgba(11, 13, 16, 0.65));
+  }
+  .service-card__icon {
+    position: absolute;
+    top: var(--space-3);
+    left: var(--space-3);
+    z-index: 1;
+    display: inline-flex;
+    padding: var(--space-2);
+    color: var(--accent);
+    background: color-mix(in srgb, var(--bg-900) 70%, transparent);
+    border: 1px solid var(--line-2);
+    border-radius: var(--radius);
+    backdrop-filter: blur(3px);
+  }
+  .service-card__n {
+    position: absolute;
+    top: var(--space-3);
+    right: var(--space-4);
+    z-index: 1;
+    color: var(--text-100);
+  }
+  .service-card__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding: var(--space-5, 1.25rem) var(--space-6) var(--space-6);
+    flex: 1;
+  }
+  .service-card__label {
+    font-size: var(--fs-h3);
+    font-weight: 500;
+    color: var(--text-100);
+    line-height: 1.2;
+  }
+  .service-card__sub {
+    font-size: var(--fs-small);
+    color: var(--text-300);
+    flex: 1;
+  }
+  .service-card__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    color: var(--text-500);
+    text-transform: uppercase;
+    margin-top: var(--space-2);
+    transition: color var(--dur) var(--ease);
+  }
+  .service-card:hover .service-card__cta {
+    color: var(--accent);
+  }
+  .service-card__arrow {
+    transition: transform var(--dur) var(--ease);
+  }
+  .service-card:hover .service-card__arrow {
+    transform: translateX(3px);
+  }
+</style>

@@ -106,7 +106,8 @@ $source  = field('source', 200) ?: 'Сайт';
 if ($contact === '') {
   fail(422, 'contact');
 }
-$methodLabel = $method === 'telegram' ? 'Telegram' : 'Телефон';
+// Метка способа связи: явная (callback шлёт phone) или обобщённая для единого поля формы.
+$methodLabel = $method === 'telegram' ? 'Telegram' : ($method === 'phone' ? 'Телефон' : 'Контакт');
 
 /* ---------- Сборка текста ---------- */
 $lines = [

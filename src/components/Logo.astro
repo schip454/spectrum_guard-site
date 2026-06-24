@@ -17,13 +17,12 @@ const Tag = href ? 'a' : 'div';
   class:list={['logo', { 'logo--compact': compact }]}
   {...href ? { href, 'aria-label': 'Spectrum Guard — на главную' } : {}}
 >
-  <svg class="logo__mark" width="28" height="28" viewBox="0 0 28 28" aria-hidden="true">
-    <path d="M2 8V2h6" fill="none" stroke="var(--accent)" stroke-width="1.5" />
-    <path d="M26 8V2h-6" fill="none" stroke="var(--accent)" stroke-width="1.5" />
-    <path d="M2 20v6h6" fill="none" stroke="var(--accent)" stroke-width="1.5" />
-    <path d="M26 20v6h-6" fill="none" stroke="var(--accent)" stroke-width="1.5" />
-    <circle cx="14" cy="14" r="2.2" fill="var(--accent)" />
-    <circle cx="14" cy="14" r="6" fill="none" stroke="var(--line-2)" stroke-width="1" />
+  {/* Знак-«глаз» Spectrum, адаптированный под тёмно-латунную палитру сайта */}
+  <svg class="logo__mark" width="30" height="30" viewBox="0 0 30 30" aria-hidden="true">
+    <rect x="1" y="1" width="28" height="28" rx="7" fill="var(--bg-700)" stroke="var(--line-2)" />
+    <path d="M6 15 Q15 7.5 24 15 Q15 22.5 6 15 Z" fill="none" stroke="var(--accent)" stroke-width="1.5" />
+    <circle cx="15" cy="15" r="3.4" fill="var(--accent)" />
+    <circle cx="15" cy="15" r="1.2" fill="var(--bg-900)" />
   </svg>
   <span class="logo__word">
     <span class="logo__name">Spectrum&nbsp;Guard</span>

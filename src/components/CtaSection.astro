@@ -1,11 +1,10 @@
 ---
 /**
- * Блок конверсии: форма заявки + Telegram + обратный звонок (три механики, единый бэкенд).
- * Ставится в конце услуговых/гео-страниц. Сигнатурная рамка-периметр обрамляет блок.
+ * Блок конверсии. Один понятный сценарий: форма заявки. Прямые контакты (Telegram,
+ * Позвонить) — отдельной, визуально отделённой строкой, не смешаны с формой
+ * (см. правки → пункт 7). Сигнатурная рамка-периметр обрамляет блок.
  */
 import LeadForm from './LeadForm.astro';
-import TelegramCTA from './TelegramCTA.astro';
-import CallbackCTA from './CallbackCTA.astro';
 import Icon from './icons/Icon.astro';
 import { contacts, telHref } from '../data/contacts';
 
@@ -34,23 +33,27 @@ const {
         <h2 id="cta-heading">{heading}</h2>
         <p class="cta__lead">{lead}</p>
 
-        <div class="cta__alt">
-          <p class="mono cta__alt-title">Или сразу</p>
-          <TelegramCTA variant="ghost" size="lg" full />
-          <a href={telHref} class="cta__phone">
-            <Icon name="phone" size={18} />
-            <span>{contacts.phone.display}</span>
-          </a>
-          <div class="cta__callback">
-            <p class="mono cta__alt-title">Заказать звонок</p>
-            <CallbackCTA source={source} />
-          </div>
-        </div>
+        <ul class="cta__points">
+          <li><Icon name="check" size={18} /> Ответим и подберём формат под задачу</li>
+          <li><Icon name="check" size={18} /> Работаем в правовом поле, конфиденциально</li>
+          <li><Icon name="check" size={18} /> Заявки принимаем круглосуточно</li>
+        </ul>
       </div>
 
       <div class="cta__form">
-        <LeadForm source={source} />
+        <LeadForm source={source} id={`lead-form-${source ? 'page' : 'main'}`} />
       </div>
+    </div>
+
+    {/* Прямые контакты — отдельная строка, отделена от формы */}
+    <div class="cta__direct">
+      <span class="cta__direct-label mono">Удобнее иначе?</span>
+      <a href={contacts.telegram.url} class="cta__direct-btn" rel="noopener" target="_blank">
+        <Icon name="telegram" size={18} /> Написать в Telegram
+      </a>
+      <a href={telHref} class="cta__direct-btn">
+        <Icon name="phone" size={18} /> Позвонить {contacts.phone.display}
+      </a>
     </div>
   </div>
 </section>
@@ -69,36 +72,57 @@ const {
     margin-top: var(--space-4);
     max-width: 46ch;
   }
-  .cta__alt {
+  .cta__points {
     margin-top: var(--space-8);
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-4);
-    padding-top: var(--space-6);
-    border-top: 1px solid var(--line);
-  }
-  .cta__alt-title {
-    color: var(--text-500);
-  }
-  .cta__phone {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-2);
-    color: var(--text-100);
-    font-weight: 700;
-    font-size: var(--fs-h3);
-  }
-  .cta__phone:hover {
-    color: var(--accent);
-  }
-  .cta__callback {
-    margin-top: var(--space-2);
     display: flex;
     flex-direction: column;
     gap: var(--space-3);
   }
+  .cta__points li {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    color: var(--text-100);
+    font-size: var(--fs-small);
+  }
+  .cta__points :global(svg) {
+    color: var(--accent);
+    flex-shrink: 0;
+  }
   .cta__form {
     align-self: start;
+  }
+
+  /* Прямые контакты — отдельная отделённая строка */
+  .cta__direct {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-4);
+    margin-top: var(--space-6);
+    padding: var(--space-5, 1.25rem) var(--space-6);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--bg-900);
+  }
+  .cta__direct-label {
+    color: var(--text-500);
+    margin-right: auto;
+  }
+  .cta__direct-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: 0.6rem 1.1rem;
+    border: 1px solid var(--line-2);
+    border-radius: var(--radius);
+    color: var(--text-100);
+    font-size: var(--fs-small);
+    transition: border-color var(--dur) var(--ease), color var(--dur) var(--ease);
+  }
+  .cta__direct-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
   }
 
   @media (max-width: 820px) {
@@ -107,6 +131,10 @@ const {
     }
     .cta__form {
       order: -1;
+    }
+    .cta__direct-label {
+      margin-right: 0;
+      flex-basis: 100%;
     }
   }
 </style>

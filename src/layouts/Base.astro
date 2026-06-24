@@ -53,5 +53,27 @@ const jsonLd = graph(organizationSchema(), ...schemas);
     </main>
     <Footer />
     <Analytics />
+
+    <script>
+      // Появление блоков при скролле. Включаем режим только при наличии JS и если
+      // пользователь не просил уменьшить движение (тогда показываем сразу).
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const els = document.querySelectorAll('.reveal');
+      if (els.length && !reduce && 'IntersectionObserver' in window) {
+        document.body.classList.add('reveal-on');
+        const io = new IntersectionObserver(
+          (entries, obs) => {
+            for (const e of entries) {
+              if (e.isIntersecting) {
+                e.target.classList.add('is-in');
+                obs.unobserve(e.target);
+              }
+            }
+          },
+          { rootMargin: '0px 0px -10% 0px', threshold: 0.1 }
+        );
+        els.forEach((el) => io.observe(el));
+      }
+    </script>
   </body>
 </html>

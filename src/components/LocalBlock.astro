@@ -1,9 +1,10 @@
 ---
 /**
  * Локальный блок гео-страницы. Для городов с фактурой (hasLocalProof) — реальный
- * локальный контекст и медиа. Без фактуры — честный локальный контекст, без фейка
- * (никаких выдуманных кейсов/фото). Медиа подключаются, когда отобраны (TODO:CONTENT).
+ * локальный контекст и галерея кадров (через astro:assets). Без фактуры — честный
+ * локальный контекст и нейтральный кадр, без фейковых «местных» подписей.
  */
+import Media from './Media.astro';
 import type { City } from '../data/types';
 
 interface Props {
@@ -11,24 +12,32 @@ interface Props {
   serviceNom: string;
 }
 const { city, serviceNom } = Astro.props;
-const hasMedia = city.hasLocalProof && city.media.length > 0;
+// Галерея: для фактурных городов — их кадры; иначе один нейтральный (если задан).
+const gallery = city.hasLocalProof ? city.media.slice(0, 3) : city.media.slice(0, 1);
+const hasMedia = gallery.length > 0;
 ---
 
 <section class="local">
-  <p class="eyebrow">{city.nom} · {city.region}</p>
-  <h2>{serviceNom} {city.prep}</h2>
-  {city.localContext && <p class="local__context">{city.localContext}</p>}
+  <div class="local__text">
+    <p class="eyebrow">{city.nom} · {city.region}</p>
+    <h2>{serviceNom} {city.prep}</h2>
+    {city.localContext && <p class="local__context">{city.localContext}</p>}
+  </div>
 
   {
-    hasMedia ? (
-      <div class="local__media">
-        {/* TODO:CONTENT — медиа через astro:assets, единый тёмный грейд, размеры заданы */}
-        {city.media.map((src) => (
-          <img src={src} alt={`${serviceNom} — ${city.nom}`} loading="lazy" decoding="async" width="640" height="420" />
+    hasMedia && (
+      <div class:list={['local__media', `local__media--${gallery.length}`]}>
+        {gallery.map((key) => (
+          <figure class="local__frame">
+            <Media
+              src={key}
+              alt={`${serviceNom} ${city.prep} — Spectrum Guard`}
+              sizes="(max-width: 720px) 100vw, 33vw"
+              loading="lazy"
+            />
+          </figure>
         ))}
       </div>
-    ) : (
-      <!-- TODO:CONTENT — локальные фото/кейсы для {city.nom}, когда появится фактура -->
     )
   }
 </section>
@@ -49,14 +58,34 @@ const hasMedia = city.hasLocalProof && city.media.length > 0;
   }
   .local__media {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: var(--col-gap);
-    margin-top: var(--space-6);
+    margin-top: var(--space-8);
   }
-  .local__media img {
-    width: 100%;
-    height: auto;
+  .local__media--1 {
+    grid-template-columns: minmax(0, 520px);
+  }
+  .local__media--2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .local__media--3 {
+    grid-template-columns: 2fr 1fr 1fr;
+  }
+  .local__frame {
+    position: relative;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
     border-radius: var(--radius);
-    filter: grayscale(0.3) contrast(1.05) brightness(0.85);
+    border: 1px solid var(--line);
+  }
+  .local__frame :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  @media (max-width: 720px) {
+    .local__media--2,
+    .local__media--3 {
+      grid-template-columns: 1fr;
+    }
   }
 </style>

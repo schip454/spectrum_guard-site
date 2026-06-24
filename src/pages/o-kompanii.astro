@@ -10,6 +10,7 @@ import LinkCardGrid from '../components/LinkCardGrid.astro';
 import type { LinkCardItem } from '../components/LinkCardGrid.astro';
 import TrustBlock from '../components/TrustBlock.astro';
 import CtaSection from '../components/CtaSection.astro';
+import Media from '../components/Media.astro';
 import Icon from '../components/icons/Icon.astro';
 import { services } from '../data/services';
 import { cities } from '../data/cities';
@@ -63,6 +64,8 @@ const principles = [
     eyebrow="О компании"
     h1="Spectrum Guard"
     answer="Spectrum Guard — охранное агентство для частных клиентов и бизнеса. Помогаем там, где нужна безопасность человека: личная охрана, защита при угрозах, спокойный переезд при конфликте, помощь с соседями и охрана мероприятий. Работаем в восьми городах России выездным форматом, в правовом поле и конфиденциально."
+    image="hero/msk-kotelnicheskaya-sunset-hero.webp"
+    imageAlt="Spectrum Guard — охранное агентство"
   />
 
   <section class="container section about">
@@ -77,6 +80,15 @@ const principles = [
         У нас нет городских номеров и публичных адресов — обслуживание выездное по согласованному
         маршруту. Это решение в пользу дискретности: мы приезжаем туда и тогда, где и когда нужно вам.
       </p>
+    </div>
+
+    <div class="about-strip">
+      <figure class="about-strip__frame reveal">
+        <Media src="neutral/neutral-convoy-highway-03.webp" alt="Сопровождение и кортеж — Spectrum Guard" sizes="(max-width: 760px) 100vw, 50vw" loading="lazy" />
+      </figure>
+      <figure class="about-strip__frame reveal">
+        <Media src="moskva/msk-city-rangerover-01.webp" alt="Личная охрана и сопровождение в городе" sizes="(max-width: 760px) 100vw, 50vw" loading="lazy" />
+      </figure>
     </div>
 
     <ul class="principles">
@@ -123,6 +135,27 @@ const principles = [
   }
   .about__prose p {
     color: var(--text-300);
+  }
+  .about-strip {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--col-gap);
+  }
+  .about-strip__frame {
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    border-radius: var(--radius);
+    border: 1px solid var(--line);
+  }
+  .about-strip__frame :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  @media (max-width: 760px) {
+    .about-strip {
+      grid-template-columns: 1fr;
+    }
   }
   .principles {
     display: grid;

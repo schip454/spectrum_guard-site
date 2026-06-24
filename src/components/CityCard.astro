@@ -1,0 +1,103 @@
+---
+/**
+ * Карточка города с «фирменным» кадром: изображение + название + регион.
+ * Используется в блоке географии и на странице /goroda/.
+ */
+import Media from './Media.astro';
+import Icon from './icons/Icon.astro';
+import type { City } from '../data/types';
+
+interface Props {
+  city: City;
+  /** Подпись о фактуре (необязательно). */
+  note?: string;
+}
+const { city, note } = Astro.props;
+---
+
+<a href={`/${city.slug}/`} class="city-card reveal">
+  <span class="city-card__media">
+    {city.heroImage && (
+      <Media
+        src={city.heroImage}
+        alt={`Охрана и безопасность ${city.prep} — Spectrum Guard`}
+        sizes="(max-width: 720px) 100vw, (max-width: 1100px) 50vw, 25vw"
+        widths={[320, 480, 768]}
+        loading="lazy"
+      />
+    )}
+  </span>
+  <span class="city-card__row">
+    <span class="city-card__name">
+      <Icon name="pin" size={16} class="city-card__pin" />
+      {city.nom}
+    </span>
+    <Icon name="arrow" size={16} class="city-card__arrow" />
+  </span>
+  <span class="city-card__region mono">{note ?? city.region}</span>
+</a>
+
+<style>
+  .city-card {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--bg-800);
+    overflow: hidden;
+    transition: border-color var(--dur) var(--ease), transform var(--dur) var(--ease);
+  }
+  .city-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-3px);
+  }
+  .city-card__media {
+    position: relative;
+    aspect-ratio: 3 / 2;
+    background: var(--bg-700);
+    overflow: hidden;
+  }
+  .city-card__media :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s var(--ease);
+  }
+  .city-card:hover .city-card__media :global(img) {
+    transform: scale(1.05);
+  }
+  .city-card__media::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 40%, rgba(11, 13, 16, 0.55));
+  }
+  .city-card__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-4) var(--space-5, 1.25rem) var(--space-1);
+  }
+  .city-card__name {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-weight: 500;
+    color: var(--text-100);
+  }
+  .city-card__pin {
+    color: var(--accent);
+  }
+  .city-card__arrow {
+    color: var(--text-500);
+    transition: transform var(--dur) var(--ease), color var(--dur) var(--ease);
+  }
+  .city-card:hover .city-card__arrow {
+    color: var(--accent);
+    transform: translateX(3px);
+  }
+  .city-card__region {
+    padding: 0 var(--space-5, 1.25rem) var(--space-5, 1.25rem);
+    color: var(--text-500);
+  }
+</style>

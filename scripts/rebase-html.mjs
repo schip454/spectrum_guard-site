@@ -43,7 +43,7 @@ let edits = 0;
 for await (const file of walk(distDir)) {
   const html = await readFile(file, 'utf-8');
   let n = 0;
-  const out = html.replace(attrRe, (m, attr, val) => {
+  const out = html.replace(attrRe, (_m, attr, val) => {
     const rebased = rebaseValue(val);
     if (rebased !== val) n++;
     return `${attr}="${rebased}"`;

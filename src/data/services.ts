@@ -16,6 +16,9 @@ export const services: Service[] = [
     intentLabel: 'Личная охрана',
     schemaType: 'ProtectiveService',
     icon: 'guard',
+    cardImage: 'escort/escort-walk-client-blur-01.webp',
+    heroImage: 'moskva/msk-city-gwagon-01.webp',
+    gallery: ['moskva/msk-city-rangerover-01.webp', 'ekaterinburg/ekb-tower-vysotsky-02.webp'],
     tagline: 'Сопровождение и защита человека — на день, поездку или постоянно',
     answerFirst:
       'Личная охрана — это сопровождение и защита человека подготовленным сотрудником: ' +
@@ -89,6 +92,9 @@ export const services: Service[] = [
     intentLabel: 'Переезд от сожителя',
     schemaType: 'ProtectiveService',
     icon: 'move',
+    cardImage: 'escort/escort-indoor-blur-01.webp',
+    heroImage: 'escort/escort-indoor-blur-01.webp',
+    gallery: ['escort/escort-indoor-blur-02.webp'],
     tagline: 'Спокойно забрать вещи и съехать, когда дома напряжённая обстановка',
     answerFirst:
       'Охрана при переезде — это присутствие и сопровождение, когда нужно забрать вещи и съехать ' +
@@ -160,6 +166,9 @@ export const services: Service[] = [
     intentLabel: 'Вам угрожают?',
     schemaType: 'ProtectiveService',
     icon: 'threat',
+    cardImage: 'neutral/neutral-convoy-highway-01.webp',
+    heroImage: 'neutral/neutral-convoy-highway-01.webp',
+    gallery: ['neutral/neutral-forest-road-gwagon-01.webp'],
     tagline: 'Сопровождение и законная защита, когда поступают угрозы',
     answerFirst:
       'Защита при угрозах — это сопровождение и законная защита человека, которому угрожают: ' +
@@ -231,6 +240,8 @@ export const services: Service[] = [
     intentLabel: 'Шумные соседи',
     schemaType: 'ProtectiveService',
     icon: 'neighbors',
+    cardImage: 'neutral/neutral-winter-suvs-01.webp',
+    heroImage: 'neutral/neutral-winter-suvs-02.webp',
     tagline: 'Фиксация, присутствие и правовое сопровождение — без самосуда',
     answerFirst:
       'Помощь при конфликте с соседями — это присутствие, фиксация нарушений и правовое ' +
@@ -301,6 +312,9 @@ export const services: Service[] = [
     intentLabel: 'Проведение мероприятий',
     schemaType: 'ProtectiveService',
     icon: 'event',
+    cardImage: 'moskva/msk-restoran-moskva-redcarpet-01.webp',
+    heroImage: 'moskva/msk-restoran-moskva-redcarpet-01.webp',
+    gallery: ['moskva/msk-city-gwagon-01.webp', 'neutral/neutral-cottage-suvs-01.webp'],
     tagline: 'Контроль доступа, порядок и спокойствие на площадке',
     answerFirst:
       'Охрана мероприятий — это контроль доступа, поддержание порядка и быстрая реакция на ' +

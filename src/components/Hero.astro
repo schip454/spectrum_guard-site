@@ -1,34 +1,29 @@
 ---
 /**
- * Главный герой: слоган капсом display-шрифтом, тёмный кадр под CSS-затемнением,
- * сигнатурная рамка-периметр с моно-подписями, ряд из 5 интент-карточек снизу.
- *
- * Фон: пока реальный видео-кадр не отобран (TODO:CONTENT — Котельническая на закате /
- * Москва-Сити / кортеж, единый тёмный грейд), используем честное CSS-затемнение без
- * стоковых клише. Реальный <video poster> подставляется в слот ниже.
+ * Главный герой: реальный тёмный кадр под затемнением, слоган капсом display-шрифтом,
+ * сигнатурная рамка-периметр. Одно главное действие (заявка) + один второстепенный
+ * способ связи (Telegram). Без координат и без конкурирующих CTA.
+ * Интент-карточки услуг вынесены в отдельную секцию ниже (ServicesShowcase).
  */
-import IntentCard from './IntentCard.astro';
+import Media from './Media.astro';
 import Icon from './icons/Icon.astro';
-import type { IconName } from './icons/paths';
-import { services } from '../data/services';
 import { contacts } from '../data/contacts';
 
-const intents = services.map((s, i) => ({
-  label: s.intentLabel,
-  sub: s.tagline,
-  href: `/uslugi/${s.slug}/`,
-  icon: s.icon as IconName,
-  index: i + 1,
-}));
+const heroImage = 'hero/msk-kotelnicheskaya-sunset-hero.webp';
 ---
 
 <section class="hero">
-  <div class="hero__bg" aria-hidden="true">
-    {/* TODO:CONTENT — реальный тёмный видео-кадр в едином грейде:
-        <video class="hero__video" autoplay muted loop playsinline poster="/media/hero-poster.webp">
-          <source src="/media/hero.webm" type="video/webm" />
-        </video> */}
-    <div class="hero__scrim"></div>
+  <div class="hero__bg">
+    <Media
+      src={heroImage}
+      alt="Spectrum Guard — личная безопасность и сопровождение"
+      sizes="100vw"
+      widths={[768, 1080, 1280]}
+      loading="eager"
+      fetchpriority="high"
+      class="hero__img"
+    />
+    <div class="hero__scrim" aria-hidden="true"></div>
   </div>
 
   <div class="container hero__inner">
@@ -38,12 +33,7 @@ const intents = services.map((s, i) => ({
       <span class="perimeter__corner bl"></span>
       <span class="perimeter__corner br"></span>
 
-      <div class="hero__meta hero__meta--top">
-        <span class="mono">SPECTRUM&nbsp;GUARD</span>
-        <span class="mono">RU · 8 ГОРОДОВ</span>
-      </div>
-
-      <p class="hero__eyebrow mono">Охранное агентство</p>
+      <p class="hero__eyebrow mono">Охранное агентство · 8 городов России</p>
       <h1 class="hero__title display">Мы заботимся<br />о вашей безопасности</h1>
       <p class="hero__lead">
         Личная охрана, защита при угрозах, сопровождение при переезде, помощь с соседями и
@@ -54,34 +44,25 @@ const intents = services.map((s, i) => ({
         <a href="#lead" class="hero__cta hero__cta--primary">
           Оставить заявку <Icon name="arrow" size={18} />
         </a>
-        <a href={contacts.telegram.url} class="hero__cta hero__cta--ghost" rel="noopener" target="_blank">
+        <a
+          href={contacts.telegram.url}
+          class="hero__cta hero__cta--ghost"
+          rel="noopener"
+          target="_blank"
+        >
           <Icon name="telegram" size={18} /> Написать в Telegram
         </a>
       </div>
-
-      <div class="hero__meta hero__meta--bottom">
-        <span class="mono">56.8389° N · 60.6057° E</span>
-        <span class="mono">REC · 24/7</span>
-      </div>
     </div>
-  </div>
-
-  <div class="container">
-    <ul class="hero__intents" aria-label="Направления">
-      {
-        intents.map((i) => (
-          <li>
-            <IntentCard label={i.label} sub={i.sub} href={i.href} icon={i.icon} index={i.index} />
-          </li>
-        ))
-      }
-    </ul>
   </div>
 </section>
 
 <style>
   .hero {
     position: relative;
+    min-height: clamp(520px, 78vh, 760px);
+    display: flex;
+    align-items: center;
     padding-block: var(--space-16) var(--space-12);
     overflow: hidden;
   }
@@ -89,15 +70,9 @@ const intents = services.map((s, i) => ({
     position: absolute;
     inset: 0;
     z-index: 0;
-    background:
-      radial-gradient(120% 90% at 20% -10%, rgba(195, 154, 85, 0.08), transparent 55%),
-      radial-gradient(100% 100% at 100% 0%, rgba(26, 30, 37, 0.9), transparent 60%),
-      repeating-linear-gradient(0deg, transparent 0 3px, rgba(255, 255, 255, 0.012) 3px 4px),
-      var(--bg-900);
   }
-  .hero__video {
-    position: absolute;
-    inset: 0;
+  .hero__bg :global(.hero__img),
+  .hero__bg :global(img) {
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -105,19 +80,23 @@ const intents = services.map((s, i) => ({
   .hero__scrim {
     position: absolute;
     inset: 0;
-    background: linear-gradient(180deg, rgba(11, 13, 16, 0.55) 0%, rgba(11, 13, 16, 0.85) 100%);
+    background:
+      linear-gradient(180deg, rgba(11, 13, 16, 0.55) 0%, rgba(11, 13, 16, 0.78) 70%, var(--bg-900) 100%),
+      radial-gradient(120% 90% at 15% 20%, rgba(11, 13, 16, 0.2), transparent 60%);
   }
   .hero__inner {
     position: relative;
     z-index: 1;
+    width: 100%;
   }
 
   .hero__frame {
-    max-width: 56rem;
+    max-width: 46rem;
     padding: clamp(1.5rem, 4vw, 3rem);
     outline-color: var(--line-2);
+    background: color-mix(in srgb, var(--bg-900) 35%, transparent);
+    backdrop-filter: blur(2px);
   }
-  /* Оркестрованный момент на загрузке: проявление рамки и кадра. */
   .hero__frame > .perimeter__corner {
     opacity: 0;
     animation: corner-in 0.5s var(--ease) forwards;
@@ -129,19 +108,6 @@ const intents = services.map((s, i) => ({
   @keyframes corner-in {
     from { opacity: 0; transform: scale(0.6); }
     to { opacity: 1; transform: scale(1); }
-  }
-
-  .hero__meta {
-    display: flex;
-    justify-content: space-between;
-    gap: var(--space-4);
-    color: var(--text-500);
-  }
-  .hero__meta--top {
-    margin-bottom: var(--space-8);
-  }
-  .hero__meta--bottom {
-    margin-top: var(--space-8);
   }
 
   .hero__eyebrow {
@@ -156,8 +122,8 @@ const intents = services.map((s, i) => ({
     margin-bottom: var(--space-6);
   }
   .hero__lead {
-    max-width: 52ch;
-    color: var(--text-300);
+    max-width: 50ch;
+    color: var(--text-100);
     font-size: 1.125rem;
   }
 
@@ -175,46 +141,26 @@ const intents = services.map((s, i) => ({
     border-radius: var(--radius);
     border: 1px solid transparent;
     font-weight: 500;
-    transition: border-color var(--dur) var(--ease), background-color var(--dur) var(--ease);
+    transition: border-color var(--dur) var(--ease), background-color var(--dur) var(--ease), transform var(--dur-fast) var(--ease);
   }
   .hero__cta--primary {
-    background: var(--accent-tint);
+    background: var(--accent);
     border-color: var(--accent);
-    color: var(--text-100);
+    color: #1a1206;
+    font-weight: 700;
   }
   .hero__cta--primary:hover {
-    background: rgba(195, 154, 85, 0.2);
+    background: #d4ab63;
+  }
+  .hero__cta--primary:active {
+    transform: translateY(1px);
   }
   .hero__cta--ghost {
     border-color: var(--line-2);
     color: var(--text-100);
+    background: color-mix(in srgb, var(--bg-900) 50%, transparent);
   }
   .hero__cta--ghost:hover {
     border-color: var(--accent);
-  }
-
-  .hero__intents {
-    position: relative;
-    z-index: 1;
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: var(--col-gap);
-    margin-top: var(--space-16);
-  }
-
-  @media (max-width: 1100px) {
-    .hero__intents {
-      grid-template-columns: repeat(3, 1fr);
-    }
-  }
-  @media (max-width: 720px) {
-    .hero__intents {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-  @media (max-width: 460px) {
-    .hero__intents {
-      grid-template-columns: 1fr;
-    }
   }
 </style>
