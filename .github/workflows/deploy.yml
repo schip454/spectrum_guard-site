@@ -31,7 +31,15 @@ jobs:
 
       - run: npm run build
 
+      # Деплой включается автоматически, как только заданы FTP-секреты. До этого —
+      # шаг пропускается, workflow остаётся зелёным (см. README → деплой).
+      - name: Check FTP secrets
+        id: ftp
+        run: |
+          if [ -n "${{ secrets.FTP_SERVER }}" ]; then echo "ready=true" >> "$GITHUB_OUTPUT"; else echo "ready=false" >> "$GITHUB_OUTPUT"; echo '::notice::FTP secrets not set — skipping reg.ru deploy.'; fi
+
       - name: Deploy to reg.ru via FTP
+        if: steps.ftp.outputs.ready == 'true'
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_SERVER }}
