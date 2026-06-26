@@ -1,7 +1,7 @@
 ---
 /**
- * `/goroda/` — полноценный список городов присутствия с выбором (см. правки → пункт 6:
- * «География» больше не ведёт сразу в Москву). Города с локальной фактурой — первыми.
+ * `/goroda/` — список городов с выбором (см. правки → пункт 6: «География» не ведёт
+ * сразу в Москву). Все города показываем единообразно, без деления на «опорные/выездные».
  */
 import Base from '../layouts/Base.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
@@ -13,18 +13,15 @@ import { breadcrumbSchema } from '../lib/schema';
 
 const title = 'Города присутствия — Spectrum Guard';
 const description =
-  'Spectrum Guard работает в 8 городах России: Москва, Санкт-Петербург, Екатеринбург, ' +
-  'Новосибирск, Уфа, Челябинск, Пермь, Тюмень. Выберите свой город — личная охрана, защита ' +
-  'при угрозах, охрана мероприятий и другие услуги.';
+  'Spectrum Guard работает в 9 городах России: Москва, Санкт-Петербург, Екатеринбург, ' +
+  'Новосибирск, Сочи, Уфа, Челябинск, Пермь, Тюмень. Выберите свой город — личная охрана, ' +
+  'защита при угрозах, охрана мероприятий и другие услуги.';
 const path = '/goroda/';
 
 const crumbs = [
   { name: 'Главная', href: '/' },
   { name: 'Города', href: path },
 ];
-
-const withProof = cities.filter((c) => c.hasLocalProof);
-const outreach = cities.filter((c) => !c.hasLocalProof);
 ---
 
 <Base {title} {description} {path} schemas={[breadcrumbSchema(crumbs)]}>
@@ -33,22 +30,12 @@ const outreach = cities.filter((c) => !c.hasLocalProof);
   <PageHero
     eyebrow="География"
     h1="Города присутствия"
-    answer="Spectrum Guard работает в восьми городах России. Выберите свой город — увидите доступные услуги, локальный контекст и сможете оставить заявку. Работаем выездным форматом по согласованному маршруту, в правовом поле и конфиденциально."
+    answer="Spectrum Guard работает в девяти городах России. Выберите свой город — увидите доступные услуги и сможете оставить заявку. Заявку возьмёт в работу команда в вашем городе: согласует формат, время и стоимость."
   />
 
   <section class="container section">
-    <p class="eyebrow goroda__eyebrow">Опорные города</p>
-    <h2 class="goroda__h2">Есть местная фактура</h2>
     <ul class="goroda__grid">
-      {withProof.map((c) => (
-        <li><CityCard city={c} /></li>
-      ))}
-    </ul>
-
-    <p class="eyebrow goroda__eyebrow goroda__eyebrow--mt">Выездной формат</p>
-    <h2 class="goroda__h2">Работаем по согласованному маршруту</h2>
-    <ul class="goroda__grid">
-      {outreach.map((c) => (
+      {cities.map((c) => (
         <li><CityCard city={c} /></li>
       ))}
     </ul>
@@ -58,18 +45,9 @@ const outreach = cities.filter((c) => !c.hasLocalProof);
 </Base>
 
 <style>
-  .goroda__eyebrow {
-    color: var(--accent);
-  }
-  .goroda__eyebrow--mt {
-    margin-top: var(--space-16);
-  }
-  .goroda__h2 {
-    margin: var(--space-2) 0 var(--space-6);
-  }
   .goroda__grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: var(--col-gap);
   }
   @media (max-width: 1000px) {

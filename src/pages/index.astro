@@ -1,7 +1,7 @@
 ---
 /**
  * Главная `/`. Hero → один сильный блок услуг (карточки с фото) → о компании →
- * преимущества → география (8 городов) → конверсия. Без дублирующих блоков услуг
+ * преимущества → география (9 городов) → конверсия. Без дублирующих блоков услуг
  * (см. правки → пункты 2, 4). Schema: Organization (сайтово). Без хлебных крошек.
  */
 import Base from '../layouts/Base.astro';
@@ -16,28 +16,28 @@ import type { IconName } from '../components/icons/paths';
 import { services } from '../data/services';
 import { cities } from '../data/cities';
 
-const title = 'Spectrum Guard — охрана и личная безопасность в 8 городах России';
+const title = 'Spectrum Guard — охрана и личная безопасность в 9 городах России';
 const description =
   'Spectrum Guard — охранное агентство: личная охрана, защита при угрозах, охрана при ' +
   'переезде, помощь при конфликте с соседями и охрана мероприятий. Работаем в Москве, ' +
-  'Санкт-Петербурге, Екатеринбурге, Новосибирске, Уфе, Челябинске, Перми и Тюмени. ' +
+  'Санкт-Петербурге, Екатеринбурге, Новосибирске, Сочи, Уфе, Челябинске, Перми и Тюмени. ' +
   'Оставьте заявку или напишите в Telegram.';
 
 const why = [
   {
     icon: 'guard' as const,
-    title: 'В правовом поле',
+    title: 'Действуем по закону',
     text: 'Обеспечиваем безопасность и фиксируем факты, но не давим на третьих лиц. Защита, а не самосуд.',
   },
   {
     icon: 'threat' as const,
-    title: 'Конфиденциально',
-    text: 'Детали задачи и данные клиента не разглашаем. Работаем дискретно — без лишнего внимания.',
+    title: 'Дискретно',
+    text: 'Детали задачи и данные клиента не разглашаем. Работаем спокойно, без лишнего внимания.',
   },
   {
     icon: 'pin' as const,
-    title: 'Выезд по 8 городам',
-    text: 'Москва, Санкт-Петербург, Екатеринбург, Новосибирск, Уфа, Челябинск, Пермь, Тюмень. Маршрут — заранее.',
+    title: '9 городов России',
+    text: 'Москва, Санкт-Петербург, Екатеринбург, Новосибирск, Сочи, Уфа, Челябинск, Пермь, Тюмень.',
   },
   {
     icon: 'clock' as const,
@@ -79,7 +79,7 @@ const why = [
         <p class="eyebrow">О компании</p>
         <h2 id="about-heading" class="home-h2">Охрана под конкретную задачу</h2>
         <AnswerFirst
-          text="Spectrum Guard — охранное агентство для частных клиентов и бизнеса. Помогаем там, где нужна безопасность человека: личная охрана и сопровождение, защита при угрозах, спокойный переезд при конфликте, помощь с соседями и охрана мероприятий. Работаем в восьми городах России выездным форматом, в правовом поле и конфиденциально."
+          text="Spectrum Guard — охранное агентство для частных клиентов и бизнеса. Помогаем там, где нужна безопасность человека: личная охрана и сопровождение, защита при угрозах, спокойный переезд при конфликте, помощь с соседями и охрана мероприятий. Работаем в девяти городах России. Оставьте заявку — свяжемся и подберём формат под вашу ситуацию."
         />
         <p class="about-home__more">
           Подбираем формат под ситуацию — от разовой смены до постоянного режима. Сначала
@@ -109,21 +109,23 @@ const why = [
       {
         why.map((w) => (
           <li class="why__item perimeter reveal">
-            <Icon name={w.icon} size={28} class="why__icon" />
-            <h3 class="why__title">{w.title}</h3>
-            <p class="why__text">{w.text}</p>
+            <span class="why__icon" aria-hidden="true"><Icon name={w.icon} size={24} /></span>
+            <div class="why__body">
+              <h3 class="why__title">{w.title}</h3>
+              <p class="why__text">{w.text}</p>
+            </div>
           </li>
         ))
       }
     </ul>
   </section>
 
-  {/* География — 8 городов с кадрами, выбор города */}
+  {/* География — 9 городов с кадрами, выбор города */}
   <section class="section container" aria-labelledby="geo-heading">
     <div class="geo-head">
       <div>
         <p class="eyebrow">География</p>
-        <h2 id="geo-heading" class="home-h2">8 городов России</h2>
+        <h2 id="geo-heading" class="home-h2">9 городов России</h2>
       </div>
       <a href="/goroda/" class="geo-head__all mono">Все города <Icon name="arrow" size={16} /></a>
     </div>
@@ -145,24 +147,40 @@ const why = [
     margin: var(--space-2) 0 var(--space-6);
   }
 
+  /* 3 + 2: первые три по трети, последние две — крупнее (по половине).
+     Картинки и текст получают воздух, ничего не сжато. */
   .services-grid {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(6, 1fr);
     gap: var(--col-gap);
   }
-  @media (max-width: 1100px) {
-    .services-grid {
-      grid-template-columns: repeat(3, 1fr);
-    }
+  .services-grid > li {
+    grid-column: span 2;
   }
-  @media (max-width: 720px) {
+  .services-grid > li:nth-child(4),
+  .services-grid > li:nth-child(5) {
+    grid-column: span 3;
+  }
+  @media (max-width: 900px) {
     .services-grid {
       grid-template-columns: repeat(2, 1fr);
     }
+    .services-grid > li,
+    .services-grid > li:nth-child(4),
+    .services-grid > li:nth-child(5) {
+      grid-column: span 1;
+    }
+    /* пятая карточка одна в ряду — делаем её во всю ширину */
+    .services-grid > li:nth-child(5) {
+      grid-column: span 2;
+    }
   }
-  @media (max-width: 460px) {
+  @media (max-width: 520px) {
     .services-grid {
       grid-template-columns: 1fr;
+    }
+    .services-grid > li:nth-child(5) {
+      grid-column: span 1;
     }
   }
 
@@ -211,13 +229,20 @@ const why = [
     margin-top: var(--space-6);
   }
   .why__item {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-4);
     padding: var(--space-6);
     border: 1px solid var(--line);
     background: var(--bg-800);
   }
   .why__icon {
+    display: inline-flex;
+    flex-shrink: 0;
     color: var(--accent);
-    margin-bottom: var(--space-4);
+    padding: var(--space-2);
+    border: 1px solid var(--line-2);
+    border-radius: var(--radius);
   }
   .why__title {
     margin-bottom: var(--space-2);

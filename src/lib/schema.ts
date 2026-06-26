@@ -15,7 +15,7 @@ export function abs(path: string): string {
   return new URL(path, SITE_URL).href;
 }
 
-/** Organization — сайтово (в Base через @id), areaServed = все 8 городов. */
+/** Organization — сайтово (в Base через @id), areaServed = все 9 городов. */
 export function organizationSchema() {
   return {
     '@type': 'Organization',
@@ -24,7 +24,7 @@ export function organizationSchema() {
     url: SITE_URL + '/',
     description:
       'Охранное агентство Spectrum Guard: личная охрана, защита при угрозах, охрана при ' +
-      'переезде, помощь при конфликте с соседями и охрана мероприятий в 8 городах России.',
+      'переезде, помощь при конфликте с соседями и охрана мероприятий в 9 городах России.',
     telephone: contacts.phone.tel,
     email: contacts.email,
     sameAs: [contacts.telegram.url],

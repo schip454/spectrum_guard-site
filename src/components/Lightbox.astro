@@ -1,0 +1,102 @@
+---
+/**
+ * Лайтбокс для галерей. Клик по изображению внутри [data-zoom] открывает кадр крупно.
+ * Один экземпляр на страницу (рендерится в Base). Без зависимостей, reduced-motion-safe.
+ */
+---
+
+<div class="lightbox" data-lightbox hidden role="dialog" aria-modal="true" aria-label="Просмотр фото">
+  <button type="button" class="lightbox__close" data-lightbox-close aria-label="Закрыть">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+      <path d="M6 6l12 12M18 6 6 18" stroke-linecap="round" />
+    </svg>
+  </button>
+  <img class="lightbox__img" data-lightbox-img alt="" />
+</div>
+
+<script>
+  const box = document.querySelector<HTMLElement>('[data-lightbox]');
+  const img = document.querySelector<HTMLImageElement>('[data-lightbox-img]');
+  if (box && img) {
+    let lastFocus: HTMLElement | null = null;
+    const open = (src: string, alt: string) => {
+      img.src = src;
+      img.alt = alt;
+      box.hidden = false;
+      requestAnimationFrame(() => box.classList.add('is-in'));
+      lastFocus = document.activeElement as HTMLElement;
+      box.querySelector<HTMLButtonElement>('[data-lightbox-close]')?.focus();
+    };
+    const close = () => {
+      box.classList.remove('is-in');
+      window.setTimeout(() => {
+        box.hidden = true;
+        img.src = '';
+      }, 200);
+      lastFocus?.focus();
+    };
+
+    document.querySelectorAll<HTMLElement>('[data-zoom]').forEach((zone) => {
+      zone.addEventListener('click', (e) => {
+        const target = (e.target as HTMLElement).closest('img') as HTMLImageElement | null;
+        if (!target) return;
+        e.preventDefault();
+        open(target.currentSrc || target.src, target.alt || '');
+      });
+    });
+
+    box.addEventListener('click', (e) => {
+      if (e.target === box || (e.target as HTMLElement).closest('[data-lightbox-close]')) close();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !box.hidden) close();
+    });
+  }
+</script>
+
+<style>
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-toast);
+    display: grid;
+    place-items: center;
+    padding: clamp(1rem, 4vw, 3rem);
+    background: rgba(7, 9, 11, 0.92);
+    opacity: 0;
+    transition: opacity 0.2s var(--ease);
+    cursor: zoom-out;
+  }
+  .lightbox.is-in {
+    opacity: 1;
+  }
+  .lightbox__img {
+    max-width: 100%;
+    max-height: 88vh;
+    object-fit: contain;
+    border: 1px solid var(--line-2);
+    border-radius: var(--radius);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  }
+  .lightbox__close {
+    position: absolute;
+    top: var(--space-4);
+    right: var(--space-4);
+    display: inline-flex;
+    padding: var(--space-3);
+    color: var(--text-100);
+    background: var(--bg-700);
+    border: 1px solid var(--line-2);
+    border-radius: var(--radius);
+    cursor: pointer;
+  }
+  .lightbox__close:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .lightbox {
+      transition: none;
+    }
+  }
+</style>

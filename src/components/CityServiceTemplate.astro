@@ -41,14 +41,13 @@ const servicesInCity: LinkCardItem[] = otherServices(service.slug).map((s) => ({
 // Эта же услуга в соседних городах (переключатель города).
 const serviceInCities: LinkCardItem[] = otherCities(city.slug).map((c) => ({
   title: `${service.nameNom} ${c.prep}`,
-  sub: c.region,
   href: `/${c.slug}/${service.slug}/`,
   icon: 'pin',
 }));
 ---
 
 <PageHero
-  eyebrow={`${city.nom} · ${city.region}`}
+  eyebrow={city.region !== city.nom ? `${city.nom} · ${city.region}` : city.nom}
   h1={h1}
   answer={answer}
   answerLabel={`${service.nameForUrlTitle} · ${city.nom}`}

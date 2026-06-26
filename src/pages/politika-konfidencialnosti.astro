@@ -1,0 +1,143 @@
+---
+/**
+ * `/politika-konfidencialnosti/` — политика обработки персональных данных (152-ФЗ).
+ * Шаблон под заполнение реквизитами оператора (см. TODO:CONTENT). Текст — типовой,
+ * покрывает состав данных, цели, основания, сроки, права субъекта, cookie/аналитику.
+ */
+import Base from '../layouts/Base.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import PageHero from '../components/PageHero.astro';
+import { contacts } from '../data/contacts';
+import { SITE_NAME, SITE_URL } from '../config';
+import { breadcrumbSchema } from '../lib/schema';
+
+const title = 'Политика конфиденциальности — Spectrum Guard';
+const description =
+  'Политика обработки персональных данных Spectrum Guard: какие данные мы собираем через ' +
+  'форму заявки, с какой целью, на каком основании и как их защищаем.';
+const path = '/politika-konfidencialnosti/';
+const crumbs = [
+  { name: 'Главная', href: '/' },
+  { name: 'Политика конфиденциальности', href: path },
+];
+
+// Дата вступления в силу. TODO:CONTENT — поддерживать актуальной при изменениях.
+const updated = '24 июня 2026 г.';
+const operator = contacts.legal.name ?? SITE_NAME;
+---
+
+<Base {title} {description} {path} schemas={[breadcrumbSchema(crumbs)]} noindex>
+  <Breadcrumbs {crumbs} />
+  <PageHero eyebrow="Документы" h1="Политика конфиденциальности" />
+
+  <article class="container container--narrow section policy">
+    <p class="policy__meta mono">Редакция от {updated}</p>
+
+    <p>
+      Настоящая Политика описывает, как {operator} (далее — «Оператор», «мы») обрабатывает
+      персональные данные пользователей сайта <a href={SITE_URL}>{SITE_URL}</a> в соответствии
+      с Федеральным законом № 152-ФЗ «О персональных данных».
+      {/* TODO:CONTENT — указать юридическое наименование, ИНН/ОГРН и адрес оператора */}
+    </p>
+
+    <h2>1. Какие данные мы собираем</h2>
+    <p>Через форму заявки и формы обратной связи мы собираем данные, которые вы указываете сами:</p>
+    <ul>
+      <li>имя (как к вам обращаться);</li>
+      <li>контакт для связи — номер телефона или ник/ссылку в Telegram;</li>
+      <li>текст обращения (по желанию).</li>
+    </ul>
+    <p>
+      Автоматически могут собираться технические данные: cookie, IP-адрес, сведения о
+      браузере и действиях на сайте — через сервисы веб-аналитики (см. раздел 6).
+    </p>
+
+    <h2>2. Цели обработки</h2>
+    <ul>
+      <li>связаться с вами по оставленной заявке и обсудить задачу;</li>
+      <li>оказать запрошенные услуги;</li>
+      <li>улучшать работу сайта и качество сервиса.</li>
+    </ul>
+
+    <h2>3. Правовое основание</h2>
+    <p>
+      Обработка осуществляется на основании вашего согласия, которое вы даёте, отправляя форму
+      с отметкой о согласии, а также для исполнения договора, стороной которого вы являетесь.
+    </p>
+
+    <h2>4. Срок хранения</h2>
+    <p>
+      Данные хранятся до достижения целей обработки или до отзыва согласия. Вы можете отозвать
+      согласие, направив запрос на <a href={`mailto:${contacts.email}`}>{contacts.email}</a>.
+    </p>
+
+    <h2>5. Передача третьим лицам</h2>
+    <p>
+      Мы не продаём и не передаём ваши данные третьим лицам, кроме случаев, необходимых для
+      обработки заявки (доставка обращения на нашу почту и в Telegram) и предусмотренных
+      законом. Сервисы веб-аналитики обрабатывают обезличенные технические данные.
+    </p>
+
+    <h2>6. Cookie и аналитика</h2>
+    <p>
+      Сайт использует cookie и системы веб-аналитики (например, Яндекс Метрика) для оценки
+      посещаемости и улучшения сайта. Аналитика подключается только после вашего согласия в
+      баннере cookie. Вы можете отказаться — основные функции сайта продолжат работать.
+    </p>
+
+    <h2>7. Ваши права</h2>
+    <p>
+      Вы вправе запросить доступ к своим данным, их уточнение, блокирование или удаление, а
+      также отозвать согласие. Для этого напишите на
+      <a href={`mailto:${contacts.email}`}>{contacts.email}</a>.
+    </p>
+
+    <h2>8. Контакты оператора</h2>
+    <p>
+      {operator}<br />
+      E-mail: <a href={`mailto:${contacts.email}`}>{contacts.email}</a><br />
+      Telegram: <a href={contacts.telegram.url} rel="noopener" target="_blank">{contacts.telegram.label}</a>
+    </p>
+  </article>
+</Base>
+
+<style>
+  .policy {
+    color: var(--text-300);
+  }
+  .policy__meta {
+    color: var(--text-500);
+    margin-bottom: var(--space-8);
+  }
+  .policy h2 {
+    color: var(--text-100);
+    font-size: var(--fs-h2);
+    margin: var(--space-12) 0 var(--space-4);
+  }
+  .policy p {
+    margin-bottom: var(--space-4);
+    max-width: 72ch;
+  }
+  .policy ul {
+    list-style: none;
+    margin: 0 0 var(--space-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+  .policy li {
+    padding-left: var(--space-5, 1.25rem);
+    position: relative;
+  }
+  .policy li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+  }
+  .policy a {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+</style>

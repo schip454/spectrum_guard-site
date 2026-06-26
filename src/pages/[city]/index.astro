@@ -72,7 +72,7 @@ const schemas = [
   <Breadcrumbs {crumbs} />
 
   <PageHero
-    eyebrow={`${city.nom} · ${city.region}`}
+    eyebrow={city.region !== city.nom ? `${city.nom} · ${city.region}` : city.nom}
     h1={cityHubH1(city)}
     answer={cityHubAnswerFirst(city)}
     answerLabel={`охрана · ${city.nom}`}

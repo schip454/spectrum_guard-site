@@ -1,0 +1,92 @@
+---
+/**
+ * `/uslugi/` — витрина всех услуг (см. правки: «Услуги» не должны сразу открывать
+ * личную охрану). Карточки с кадрами → хабы услуг.
+ */
+import Base from '../../layouts/Base.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import PageHero from '../../components/PageHero.astro';
+import ServiceCard from '../../components/ServiceCard.astro';
+import CtaSection from '../../components/CtaSection.astro';
+import type { IconName } from '../../components/icons/paths';
+import { services } from '../../data/services';
+import { breadcrumbSchema } from '../../lib/schema';
+
+const title = 'Услуги — Spectrum Guard | личная охрана, защита, мероприятия';
+const description =
+  'Услуги Spectrum Guard: личная охрана и сопровождение, охрана при переезде, защита при ' +
+  'угрозах, помощь при конфликте с соседями, охрана мероприятий. 9 городов России. Оставьте заявку.';
+const path = '/uslugi/';
+
+const crumbs = [
+  { name: 'Главная', href: '/' },
+  { name: 'Услуги', href: path },
+];
+---
+
+<Base {title} {description} {path} schemas={[breadcrumbSchema(crumbs)]}>
+  <Breadcrumbs {crumbs} />
+
+  <PageHero
+    eyebrow="Услуги"
+    h1="Что мы делаем"
+    answer="Spectrum Guard закрывает пять направлений личной безопасности: личная охрана и сопровождение, охрана при переезде, защита при угрозах, помощь при конфликте с соседями и охрана мероприятий. Выберите направление — расскажем, что входит и как заказать."
+  />
+
+  <section class="container section">
+    <ul class="uslugi-grid">
+      {
+        services.map((s, i) => (
+          <li>
+            <ServiceCard
+              label={s.nameNom}
+              sub={s.tagline}
+              href={`/uslugi/${s.slug}/`}
+              icon={s.icon as IconName}
+              image={s.cardImage}
+              index={i + 1}
+            />
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <CtaSection source="Страница услуг" />
+</Base>
+
+<style>
+  .uslugi-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: var(--col-gap);
+  }
+  .uslugi-grid > li {
+    grid-column: span 2;
+  }
+  .uslugi-grid > li:nth-child(4),
+  .uslugi-grid > li:nth-child(5) {
+    grid-column: span 3;
+  }
+  @media (max-width: 900px) {
+    .uslugi-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .uslugi-grid > li,
+    .uslugi-grid > li:nth-child(4),
+    .uslugi-grid > li:nth-child(5) {
+      grid-column: span 1;
+    }
+    .uslugi-grid > li:nth-child(5) {
+      grid-column: span 2;
+    }
+  }
+  @media (max-width: 520px) {
+    .uslugi-grid {
+      grid-template-columns: 1fr;
+    }
+    .uslugi-grid > li:nth-child(5) {
+      grid-column: span 1;
+    }
+  }
+</style>

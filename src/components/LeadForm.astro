@@ -1,14 +1,13 @@
 ---
 /**
- * Форма заявки — одно понятное действие: имя + контакт + (необязательно) суть.
- * Без выбора способа связи внутри формы (отдельные кнопки Telegram/Позвонить живут вне
- * формы — см. правки → пункт 7). Отправка на public/api/lead.php → e-mail + Telegram-бот.
- * Анти-спам: honeypot + временная метка. Прогрессивное улучшение через fetch + тост.
+ * Форма заявки. Способ связи — строго ОДИН из двух: телефон ИЛИ Telegram (переключатель).
+ * Для телефона — маска +7 (XXX) XXX-XX-XX под российский стандарт. Для Telegram — @username.
+ * Согласие на обработку ПД (152-ФЗ) — обязательный чекбокс со ссылкой на политику.
+ * Отправка на public/api/lead.php → e-mail + Telegram-бот. Анти-спам: honeypot + метка времени.
  */
 import Button from './Button.astro';
 
 interface Props {
-  /** Источник заявки — попадёт в письмо/сообщение (напр. «Личная охрана в Москве»). */
   source?: string;
   id?: string;
 }
@@ -17,7 +16,6 @@ const { source = '', id = 'lead-form' } = Astro.props;
 
 <form class="lead-form" id={id} action="/api/lead.php" method="post" data-lead-form>
   <input type="hidden" name="source" value={source} />
-  {/* honeypot — реальные люди поле не видят */}
   <div class="lead-form__hp" aria-hidden="true">
     <label>Компания<input type="text" name="company" tabindex="-1" autocomplete="off" /></label>
   </div>
@@ -28,36 +26,122 @@ const { source = '', id = 'lead-form' } = Astro.props;
     <input type="text" name="name" required autocomplete="name" placeholder="Имя" />
   </label>
 
-  <label class="field">
-    <span class="field__label">Телефон или Telegram для связи</span>
+  <fieldset class="field lead-form__method">
+    <legend class="field__label">Как с вами связаться</legend>
+    <div class="seg" role="radiogroup" aria-label="Способ связи">
+      <label class="seg__opt">
+        <input type="radio" name="method" value="phone" checked data-method-phone />
+        <span>Телефон</span>
+      </label>
+      <label class="seg__opt">
+        <input type="radio" name="method" value="telegram" data-method-tg />
+        <span>Telegram</span>
+      </label>
+    </div>
     <input
-      type="text"
+      type="tel"
       name="contact"
       required
-      inputmode="tel"
       autocomplete="tel"
-      placeholder="+7 … или @username"
+      placeholder="+7 (___) ___-__-__"
+      data-contact
+      aria-label="Телефон для связи"
     />
-  </label>
+    <p class="lead-form__hint mono" data-contact-hint>Введите номер телефона</p>
+  </fieldset>
 
   <label class="field">
     <span class="field__label">Коротко о ситуации <span class="field__opt">— необязательно</span></span>
     <textarea name="message" rows={3} placeholder="Что нужно и в каком городе"></textarea>
   </label>
 
+  <label class="consent">
+    <input type="checkbox" name="consent" required />
+    <span>
+      Согласен с <a href="/politika-konfidencialnosti/" target="_blank" rel="noopener">политикой
+      конфиденциальности</a> и обработкой персональных данных.
+    </span>
+  </label>
+
   <Button type="submit" variant="primary" size="lg" full>Оставить заявку</Button>
-  <p class="lead-form__note mono">Перезвоним или напишем. Конфиденциально, в правовом поле.</p>
+  <p class="lead-form__note mono">Перезвоним или напишем. Без обязательств.</p>
 </form>
 
 <div class="lead-toast" data-toast role="status" aria-live="polite" hidden></div>
 
 <script>
+  // Маска российского номера: +7 (XXX) XXX-XX-XX
+  function formatPhone(raw: string): string {
+    let d = raw.replace(/\D/g, '');
+    if (d.startsWith('8')) d = '7' + d.slice(1);
+    else if (d.startsWith('9')) d = '7' + d;
+    if (!d.startsWith('7')) d = '7' + d;
+    d = d.slice(0, 11);
+    const a = d.slice(1, 4),
+      b = d.slice(4, 7),
+      c = d.slice(7, 9),
+      e = d.slice(9, 11);
+    let out = '+7';
+    if (a) out += ' (' + a;
+    if (a.length === 3) out += ')';
+    if (b) out += ' ' + b;
+    if (c) out += '-' + c;
+    if (e) out += '-' + e;
+    return out;
+  }
+
   document.querySelectorAll<HTMLFormElement>('[data-lead-form]').forEach((form) => {
     const tsField = form.querySelector<HTMLInputElement>('[data-ts]');
     if (tsField) tsField.value = String(Date.now());
 
+    const contact = form.querySelector<HTMLInputElement>('[data-contact]');
+    const hint = form.querySelector<HTMLElement>('[data-contact-hint]');
+    const phoneRadio = form.querySelector<HTMLInputElement>('[data-method-phone]');
+    const tgRadio = form.querySelector<HTMLInputElement>('[data-method-tg]');
+
+    let mode: 'phone' | 'telegram' = 'phone';
+
+    const onPhoneInput = (e: Event) => {
+      const el = e.target as HTMLInputElement;
+      el.value = formatPhone(el.value);
+    };
+
+    function setMode(next: 'phone' | 'telegram') {
+      if (!contact) return;
+      mode = next;
+      contact.value = '';
+      if (next === 'phone') {
+        contact.type = 'tel';
+        contact.inputMode = 'tel';
+        contact.placeholder = '+7 (___) ___-__-__';
+        contact.setAttribute('aria-label', 'Телефон для связи');
+        contact.pattern = '\\+7 \\(\\d{3}\\) \\d{3}-\\d{2}-\\d{2}';
+        contact.addEventListener('input', onPhoneInput);
+        if (hint) hint.textContent = 'Введите номер телефона';
+      } else {
+        contact.type = 'text';
+        contact.inputMode = 'text';
+        contact.placeholder = '@username или ссылка t.me';
+        contact.setAttribute('aria-label', 'Telegram для связи');
+        contact.removeAttribute('pattern');
+        contact.removeEventListener('input', onPhoneInput);
+        if (hint) hint.textContent = 'Укажите ваш ник или ссылку в Telegram';
+      }
+    }
+
+    phoneRadio?.addEventListener('change', () => phoneRadio.checked && setMode('phone'));
+    tgRadio?.addEventListener('change', () => tgRadio.checked && setMode('telegram'));
+    setMode('phone');
+
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
+      // Доп. проверка телефона: 11 цифр
+      if (mode === 'phone' && contact && contact.value.replace(/\D/g, '').length !== 11) {
+        contact.setCustomValidity('Введите полный номер телефона');
+        contact.reportValidity();
+        contact.setCustomValidity('');
+        return;
+      }
       const btn = form.querySelector<HTMLButtonElement>('button[type="submit"]');
       const toast = document.querySelector<HTMLElement>('[data-toast]');
       if (btn) {
@@ -69,6 +153,7 @@ const { source = '', id = 'lead-form' } = Astro.props;
         const res = await fetch(form.action, { method: 'POST', body: new FormData(form) });
         if (!res.ok) throw new Error('bad status');
         form.reset();
+        setMode('phone');
         if (tsField) tsField.value = String(Date.now());
         showToast('Заявка отправлена. Скоро свяжемся.', true);
       } catch {
@@ -112,6 +197,9 @@ const { source = '', id = 'lead-form' } = Astro.props;
     display: flex;
     flex-direction: column;
     gap: var(--space-2);
+    border: 0;
+    padding: 0;
+    margin: 0;
   }
   .field__label {
     font-size: var(--fs-small);
@@ -121,6 +209,7 @@ const { source = '', id = 'lead-form' } = Astro.props;
     color: var(--text-500);
   }
   input[type='text'],
+  input[type='tel'],
   textarea {
     width: 100%;
     background: var(--bg-900);
@@ -144,6 +233,74 @@ const { source = '', id = 'lead-form' } = Astro.props;
     resize: vertical;
     min-height: 3rem;
   }
+
+  /* Сегментированный переключатель способа связи */
+  .lead-form__method {
+    gap: var(--space-3);
+  }
+  .seg {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+    padding: 4px;
+    background: var(--bg-900);
+    border: 1px solid var(--line-2);
+    border-radius: var(--radius);
+  }
+  .seg__opt {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.55rem 0.75rem;
+    border-radius: calc(var(--radius) - 1px);
+    cursor: pointer;
+    font-size: var(--fs-small);
+    color: var(--text-300);
+    transition: background-color var(--dur) var(--ease), color var(--dur) var(--ease);
+  }
+  .seg__opt input {
+    position: absolute;
+    opacity: 0;
+    inset: 0;
+    cursor: pointer;
+  }
+  .seg__opt:has(input:checked) {
+    background: var(--accent-tint);
+    color: var(--text-100);
+    box-shadow: inset 0 0 0 1px var(--accent);
+  }
+  .seg__opt:has(input:focus-visible) {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  .lead-form__hint {
+    color: var(--text-500);
+    text-transform: none;
+    letter-spacing: 0.01em;
+  }
+
+  /* Согласие */
+  .consent {
+    display: flex;
+    gap: var(--space-3);
+    align-items: flex-start;
+    font-size: var(--fs-small);
+    color: var(--text-300);
+  }
+  .consent input {
+    margin-top: 3px;
+    width: 16px;
+    height: 16px;
+    accent-color: var(--accent);
+    flex-shrink: 0;
+  }
+  .consent a {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
   .lead-form__note {
     color: var(--text-500);
     text-transform: none;

@@ -18,8 +18,8 @@ import { breadcrumbSchema } from '../lib/schema';
 
 const title = 'О компании — Spectrum Guard';
 const description =
-  'Spectrum Guard — охранное агентство для частных клиентов и бизнеса. Принципы: работа в ' +
-  'правовом поле, конфиденциальность, выезд по 8 городам России. Как мы работаем и чем помогаем.';
+  'Spectrum Guard — охранное агентство для частных клиентов и бизнеса. Как мы работаем, ' +
+  'принципы и чем помогаем. Личная охрана, защита при угрозах, переезд, соседи, мероприятия в 9 городах.';
 const path = '/o-kompanii/';
 
 const crumbs = [
@@ -39,8 +39,8 @@ const principles = [
     icon: 'guard' as const,
     title: 'Закон выше эмоций',
     text:
-      'Мы обеспечиваем безопасность и фиксируем происходящее, помогаем довести дело до полиции ' +
-      'или суда. Мы не давим на третьих лиц и не участвуем в самосуде.',
+      'Обеспечиваем безопасность и действуем в рамках закона. Не давим на третьих лиц и не ' +
+      'участвуем в самосуде — наша задача защитить вас, а не свести счёты.',
   },
   {
     icon: 'threat' as const,
@@ -63,23 +63,44 @@ const principles = [
   <PageHero
     eyebrow="О компании"
     h1="Spectrum Guard"
-    answer="Spectrum Guard — охранное агентство для частных клиентов и бизнеса. Помогаем там, где нужна безопасность человека: личная охрана, защита при угрозах, спокойный переезд при конфликте, помощь с соседями и охрана мероприятий. Работаем в восьми городах России выездным форматом, в правовом поле и конфиденциально."
+    answer="Spectrum Guard — охранное агентство для частных клиентов и бизнеса. Помогаем там, где нужна безопасность человека: личная охрана, защита при угрозах, спокойный переезд при конфликте, помощь с соседями и охрана мероприятий. Работаем в девяти городах России — заявку ведёт команда в вашем городе."
     image="hero/msk-kotelnicheskaya-sunset-hero.webp"
     imageAlt="Spectrum Guard — охранное агентство"
   />
 
   <section class="container section about">
-    <div class="about__prose flow">
+    <div class="about__prose">
       <h2>Как мы работаем</h2>
-      <p>
-        Мы подбираем формат под конкретную ситуацию — от разовой смены до постоянного режима.
-        Сначала короткий разговор: что происходит, какие риски, что нужно. Затем согласуем план,
-        состав и стоимость — без скрытых доплат. Дальше работаем по плану и корректируем по ходу.
-      </p>
-      <p>
-        У нас нет городских номеров и публичных адресов — обслуживание выездное по согласованному
-        маршруту. Это решение в пользу дискретности: мы приезжаем туда и тогда, где и когда нужно вам.
-      </p>
+      <ol class="about__steps">
+        <li>
+          <span class="about__step-n mono">01</span>
+          <div>
+            <h3>Вы оставляете заявку</h3>
+            <p>На сайте, в Telegram или звонком. Достаточно коротко описать ситуацию и город.</p>
+          </div>
+        </li>
+        <li>
+          <span class="about__step-n mono">02</span>
+          <div>
+            <h3>Мы связываемся и обсуждаем задачу</h3>
+            <p>Уточняем, что происходит, какой формат нужен и в какие сроки.</p>
+          </div>
+        </li>
+        <li>
+          <span class="about__step-n mono">03</span>
+          <div>
+            <h3>Передаём заявку команде в вашем городе</h3>
+            <p>Задачей занимаются люди на месте — те, кто будет работать с вами.</p>
+          </div>
+        </li>
+        <li>
+          <span class="about__step-n mono">04</span>
+          <div>
+            <h3>Команда согласует время и стоимость</h3>
+            <p>На месте оценивают задачу, называют цену без скрытых доплат и берут её в работу.</p>
+          </div>
+        </li>
+      </ol>
     </div>
 
     <div class="about-strip">
@@ -95,9 +116,11 @@ const principles = [
       {
         principles.map((p) => (
           <li class="principles__item perimeter">
-            <Icon name={p.icon} size={28} class="principles__icon" />
-            <h3>{p.title}</h3>
-            <p>{p.text}</p>
+            <span class="principles__icon" aria-hidden="true"><Icon name={p.icon} size={24} /></span>
+            <div class="principles__body">
+              <h3>{p.title}</h3>
+              <p>{p.text}</p>
+            </div>
           </li>
         ))
       }
@@ -107,7 +130,7 @@ const principles = [
       <h2>География</h2>
       <p class="about__geo-text">
         Работаем в {cities.length} городах России: {cities.map((c) => c.nom).join(', ')}.
-        Екатеринбург — опорный город. В остальных — выездной формат по согласованному маршруту.
+        В каждом городе задачу ведут люди на месте.
       </p>
     </div>
 
@@ -129,6 +152,35 @@ const principles = [
   }
   .about__prose {
     max-width: 70ch;
+  }
+  .about__steps {
+    list-style: none;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-6) var(--space-8);
+    margin-top: var(--space-6);
+  }
+  .about__steps li {
+    display: flex;
+    gap: var(--space-4);
+    align-items: flex-start;
+  }
+  .about__step-n {
+    color: var(--accent);
+    padding-top: 0.2rem;
+    flex-shrink: 0;
+  }
+  .about__steps h3 {
+    margin-bottom: var(--space-2);
+  }
+  .about__steps p {
+    color: var(--text-300);
+    font-size: var(--fs-small);
+  }
+  @media (max-width: 640px) {
+    .about__steps {
+      grid-template-columns: 1fr;
+    }
   }
   .about__prose h2 {
     margin-bottom: var(--space-4);
@@ -163,13 +215,20 @@ const principles = [
     gap: var(--col-gap);
   }
   .principles__item {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-4);
     padding: var(--space-6);
     border: 1px solid var(--line);
     background: var(--bg-800);
   }
   .principles__icon {
+    display: inline-flex;
+    flex-shrink: 0;
     color: var(--accent);
-    margin-bottom: var(--space-4);
+    padding: var(--space-2);
+    border: 1px solid var(--line-2);
+    border-radius: var(--radius);
   }
   .principles__item h3 {
     margin-bottom: var(--space-2);

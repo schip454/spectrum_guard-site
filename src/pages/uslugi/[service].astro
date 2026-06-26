@@ -9,7 +9,6 @@ import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import PageHero from '../../components/PageHero.astro';
 import SectionBody from '../../components/SectionBody.astro';
 import FaqList from '../../components/FaqList.astro';
-import Media from '../../components/Media.astro';
 import LinkCardGrid from '../../components/LinkCardGrid.astro';
 import type { LinkCardItem } from '../../components/LinkCardGrid.astro';
 import CtaSection from '../../components/CtaSection.astro';
@@ -34,18 +33,16 @@ const { service } = Astro.props as Props;
 const path = `/uslugi/${service.slug}/`;
 const title = serviceHubTitle(service);
 const description = serviceHubDescription(service);
-const gallery = service.gallery ?? [];
 
 const crumbs = [
   { name: 'Главная', href: '/' },
-  { name: 'Услуги', href: `/uslugi/${service.slug}/` },
+  { name: 'Услуги', href: '/uslugi/' },
   { name: service.nameNom, href: path },
 ];
 
-// «Выберите город» → 8 гео-страниц этой услуги.
+// «Выберите город» → гео-страницы этой услуги.
 const cityLinks: LinkCardItem[] = cities.map((c) => ({
   title: `${service.nameNom} ${c.prep}`,
-  sub: c.region,
   href: `/${c.slug}/${service.slug}/`,
   icon: 'pin',
 }));
@@ -81,7 +78,7 @@ const schemas = [
   <Breadcrumbs {crumbs} />
 
   <PageHero
-    eyebrow="Услуга · 8 городов России"
+    eyebrow="Услуга · 9 городов России"
     h1={service.nameNom}
     answer={service.answerFirst}
     answerLabel={service.nameForUrlTitle}
@@ -97,20 +94,6 @@ const schemas = [
           <SectionBody section={section} />
         </>
       ))
-    }
-    {
-      gallery.length > 0 && (
-        <>
-          <hr class="hairline" />
-          <div class="hub-gallery">
-            {gallery.map((key) => (
-              <figure class="hub-gallery__frame reveal">
-                <Media src={key} alt={service.nameNom} sizes="(max-width: 760px) 100vw, 33vw" loading="lazy" />
-              </figure>
-            ))}
-          </div>
-        </>
-      )
     }
     <hr class="hairline" />
     <FaqList items={service.faq} heading={`Вопросы про ${service.nameForUrlTitle}`} />
@@ -152,21 +135,5 @@ const schemas = [
   }
   .hub-articles-gap {
     height: var(--space-16);
-  }
-  .hub-gallery {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: var(--col-gap);
-  }
-  .hub-gallery__frame {
-    aspect-ratio: 4 / 3;
-    overflow: hidden;
-    border-radius: var(--radius);
-    border: 1px solid var(--line);
-  }
-  .hub-gallery__frame :global(img) {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
   }
 </style>

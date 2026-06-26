@@ -9,7 +9,7 @@ export interface NavItem {
 
 /** Главное меню шапки. */
 export const mainNav: NavItem[] = [
-  { label: 'Услуги', href: '/uslugi/lichnaya-ohrana/' },
+  { label: 'Услуги', href: '/uslugi/' },
   { label: 'География', href: '/goroda/' },
   { label: 'Цены', href: '/ceny/' },
   { label: 'Блог', href: '/blog/' },
@@ -36,4 +36,5 @@ export const footerLinks: NavItem[] = [
   { label: 'Отзывы', href: '/otzyvy/' },
   { label: 'Цены', href: '/ceny/' },
   { label: 'Блог', href: '/blog/' },
+  { label: 'Политика конфиденциальности', href: '/politika-konfidencialnosti/' },
 ];

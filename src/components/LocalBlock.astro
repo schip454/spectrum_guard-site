@@ -26,7 +26,10 @@ const hasMedia = gallery.length > 0;
 
   {
     hasMedia && (
-      <div class:list={['local__media', `local__media--${gallery.length}`]}>
+      <div
+        class:list={['local__media', `local__media--${gallery.length}`]}
+        data-zoom={gallery.length > 1 ? '' : undefined}
+      >
         {gallery.map((key) => (
           <figure class="local__frame">
             <Media
@@ -56,23 +59,27 @@ const hasMedia = gallery.length > 0;
     color: var(--text-300);
     max-width: 70ch;
   }
+  /* Равные по размеру кадры, единый аспект. >1 кадра — кликабельны (лайтбокс). */
   .local__media {
     display: grid;
     gap: var(--col-gap);
     margin-top: var(--space-8);
   }
   .local__media--1 {
-    grid-template-columns: minmax(0, 520px);
+    grid-template-columns: minmax(0, 560px);
   }
   .local__media--2 {
     grid-template-columns: repeat(2, 1fr);
   }
   .local__media--3 {
-    grid-template-columns: 2fr 1fr 1fr;
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .local__media[data-zoom] .local__frame {
+    cursor: zoom-in;
   }
   .local__frame {
     position: relative;
-    aspect-ratio: 16 / 10;
+    aspect-ratio: 4 / 3;
     overflow: hidden;
     border-radius: var(--radius);
     border: 1px solid var(--line);
@@ -81,8 +88,18 @@ const hasMedia = gallery.length > 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
+    transition: transform var(--dur) var(--ease);
+  }
+  .local__media[data-zoom] .local__frame:hover :global(img) {
+    transform: scale(1.04);
   }
   @media (max-width: 720px) {
+    .local__media--2,
+    .local__media--3 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 460px) {
     .local__media--2,
     .local__media--3 {
       grid-template-columns: 1fr;
