@@ -1,0 +1,75 @@
+---
+/**
+ * `/voprosy/` — общий FAQ-раздел: общие вопросы + вопросы по каждой услуге.
+ * Один FAQPage на всю страницу (текст совпадает с видимым). На страницах услуг —
+ * свои блоки FAQ; здесь — единая точка для SEO/AEO.
+ */
+import Base from '../layouts/Base.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import PageHero from '../components/PageHero.astro';
+import FaqList from '../components/FaqList.astro';
+import LinkCardGrid from '../components/LinkCardGrid.astro';
+import type { LinkCardItem } from '../components/LinkCardGrid.astro';
+import CtaSection from '../components/CtaSection.astro';
+import { generalFaq } from '../data/faq';
+import { services } from '../data/services';
+import { faqSchema, breadcrumbSchema } from '../lib/schema';
+
+const title = 'Вопросы и ответы — Spectrum Guard';
+const description =
+  'Частые вопросы о работе Spectrum Guard: как оставить заявку, в каких городах работаем, ' +
+  'сколько стоит, законно ли это, и вопросы по каждой услуге — личная охрана, переезд, ' +
+  'угрозы, соседи, мероприятия.';
+const path = '/voprosy/';
+
+const crumbs = [
+  { name: 'Главная', href: '/' },
+  { name: 'Вопросы', href: path },
+];
+
+const serviceLinks: LinkCardItem[] = services.map((s) => ({
+  title: s.nameNom,
+  sub: s.tagline,
+  href: `/uslugi/${s.slug}/`,
+  icon: s.icon as LinkCardItem['icon'],
+}));
+
+// Единый FAQPage: общие + по каждой услуге (текст совпадает с видимым ниже).
+const allFaq = [...generalFaq, ...services.flatMap((s) => s.faq)];
+const schemas = [faqSchema(allFaq), breadcrumbSchema(crumbs)];
+---
+
+<Base {title} {description} {path} {schemas}>
+  <Breadcrumbs {crumbs} />
+
+  <PageHero
+    eyebrow="Поддержка"
+    h1="Вопросы и ответы"
+    answer="Собрали частые вопросы о работе Spectrum Guard: как оставить заявку и что будет дальше, в каких городах работаем, сколько стоит и законно ли это. Ниже — общие вопросы и отдельные блоки по каждой услуге."
+  />
+
+  <div class="container voprosy">
+    <FaqList items={generalFaq} heading="Общие вопросы" />
+
+    {
+      services.map((s) => (
+        <FaqList items={s.faq} heading={s.nameNom} />
+      ))
+    }
+  </div>
+
+  <CtaSection source="Страница вопросов" heading="Не нашли ответ?" />
+
+  <section class="container section">
+    <LinkCardGrid eyebrow="Услуги" heading="Подробнее по направлениям" items={serviceLinks} columns={3} />
+  </section>
+</Base>
+
+<style>
+  .voprosy {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-16);
+    padding-block: var(--section-y);
+  }
+</style>

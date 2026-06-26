@@ -33,6 +33,7 @@ export const citiesNav: NavItem[] = cities.map((c) => ({
 export const footerLinks: NavItem[] = [
   { label: 'О компании', href: '/o-kompanii/' },
   { label: 'Контакты', href: '/kontakty/' },
+  { label: 'Вопросы и ответы', href: '/voprosy/' },
   { label: 'Отзывы', href: '/otzyvy/' },
   { label: 'Цены', href: '/ceny/' },
   { label: 'Блог', href: '/blog/' },
