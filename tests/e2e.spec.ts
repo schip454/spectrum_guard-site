@@ -80,7 +80,7 @@ test.describe('Навигация (десктоп)', () => {
 test.describe('Форма заявки', () => {
   test('маска телефона форматирует ввод', async ({ page }) => {
     await page.goto('/kontakty/');
-    const form = page.locator('form[data-lead-form]').first();
+    const form = page.locator('form[data-lead-form]:has([data-method-phone])').first();
     await form.locator('input[name="name"]').fill('Тест');
     const contact = form.locator('[data-contact]');
     await contact.click();
@@ -90,7 +90,7 @@ test.describe('Форма заявки', () => {
 
   test('переключение на Telegram очищает и меняет поле', async ({ page }) => {
     await page.goto('/kontakty/');
-    const form = page.locator('form[data-lead-form]').first();
+    const form = page.locator('form[data-lead-form]:has([data-method-phone])').first();
     const contact = form.locator('[data-contact]');
     await contact.type('9001234567');
     await form.locator('[data-method-tg]').check();
@@ -100,7 +100,7 @@ test.describe('Форма заявки', () => {
 
   test('без согласия форма не отправляется (нативная валидация)', async ({ page }) => {
     await page.goto('/kontakty/');
-    const form = page.locator('form[data-lead-form]').first();
+    const form = page.locator('form[data-lead-form]:has([data-method-phone])').first();
     await form.locator('input[name="name"]').fill('Тест');
     await form.locator('[data-contact]').type('9001234567');
     // НЕ ставим галочку согласия
@@ -112,7 +112,7 @@ test.describe('Форма заявки', () => {
 
   test('валидная отправка проходит JS-путь (тост)', async ({ page }) => {
     await page.goto('/kontakty/');
-    const form = page.locator('form[data-lead-form]').first();
+    const form = page.locator('form[data-lead-form]:has([data-method-phone])').first();
     await form.locator('input[name="name"]').fill('Тест');
     await form.locator('[data-contact]').type('9001234567');
     await form.locator('input[name="consent"]').check();
