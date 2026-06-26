@@ -1,16 +1,42 @@
 /**
- * Отзывы — ТОЛЬКО реальные. Пока контента нет (TODO:CONTENT).
- * AggregateRating/Review-схему отдаём строго по факту, без накруток (REVIEWS_ENABLED).
+ * Отзывы — реальные обезличенные скриншоты (имена/аватары/лица заблюрены).
+ * Это UI-скриншоты, НЕ фотобанк: грейд не применяем, отдаём в высоком качестве.
+ * AggregateRating НЕ выдумываем (нет подтверждённой суммы) — только сами отзывы.
+ * См. docs/reviews-spec.md.
  */
-export interface Review {
-  author: string; // обезличенно: «Клиент», имя по согласию
-  city?: string;
-  service?: string;
-  text: string;
-  date: string; // ISO
-  rating?: number; // 1–5, только если есть реальная оценка
+export interface ReviewShot {
+  /** Ключ изображения в реестре lib/media. */
+  image: string;
+  /** Нейтральный alt без имён. */
+  alt: string;
+  /** Тип источника — влияет на пропорции карточки. */
+  kind: 'marketplace' | 'chat';
+  /** Профильные услуги (для показа на страницах услуг). */
+  services?: string[];
 }
 
-export const reviews: Review[] = [
-  // TODO:CONTENT — добавить реальные отзывы, когда поступят.
+export const reviewShots: ReviewShot[] = [
+  {
+    image: 'reviews/review-anon-01.jpg',
+    alt: 'Отзыв клиента, 5 звёзд: ответственно, оперативно, на связи',
+    kind: 'marketplace',
+    services: ['lichnaya-ohrana', 'ohrana-pri-pereezde'],
+  },
+  {
+    image: 'reviews/review-anon-02.jpg',
+    alt: 'Отзыв клиента, 5 звёзд: сработали грамотно и оперативно',
+    kind: 'marketplace',
+    services: ['lichnaya-ohrana'],
+  },
+  {
+    image: 'reviews/review-chat-anon-01.jpg',
+    alt: 'Отзыв клиента: сопровождение прошло хорошо, помогли',
+    kind: 'chat',
+    services: ['ohrana-pri-pereezde'],
+  },
+  {
+    image: 'reviews/review-chat-anon-02.jpg',
+    alt: 'Отзыв клиента: сработали оперативно и по делу',
+    kind: 'chat',
+  },
 ];

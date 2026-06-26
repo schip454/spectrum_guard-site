@@ -14,6 +14,8 @@ interface Props {
   widths?: number[];
   loading?: 'lazy' | 'eager';
   fetchpriority?: 'high' | 'low' | 'auto';
+  /** Качество webp. По умолчанию 70 (фото); для UI-скриншотов выше (текст должен читаться). */
+  quality?: number;
   class?: string;
 }
 
@@ -24,6 +26,7 @@ const {
   widths = [480, 960, 1280],
   loading = 'lazy',
   fetchpriority,
+  quality = 70,
   class: className,
 } = Astro.props;
 
@@ -35,7 +38,7 @@ const img = getMedia(src);
     <Image
       src={img}
       format="webp"
-      quality={70}
+      quality={quality}
       alt={alt}
       sizes={sizes}
       widths={widths.filter((w) => w <= (img.width ?? 1280))}

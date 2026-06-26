@@ -55,6 +55,11 @@
 </script>
 
 <style>
+  /* Критично: [hidden] должен побеждать display:grid, иначе оверлей перехватывает
+     все клики по сайту, даже будучи невидимым. */
+  .lightbox[hidden] {
+    display: none;
+  }
   .lightbox {
     position: fixed;
     inset: 0;

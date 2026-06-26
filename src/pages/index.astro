@@ -10,6 +10,7 @@ import ServiceCard from '../components/ServiceCard.astro';
 import CityCard from '../components/CityCard.astro';
 import AnswerFirst from '../components/AnswerFirst.astro';
 import CtaSection from '../components/CtaSection.astro';
+import Reviews from '../components/Reviews.astro';
 import Media from '../components/Media.astro';
 import Icon from '../components/icons/Icon.astro';
 import type { IconName } from '../components/icons/paths';
@@ -31,8 +32,8 @@ const why = [
   },
   {
     icon: 'threat' as const,
-    title: 'Дискретно',
-    text: 'Детали задачи и данные клиента не разглашаем. Работаем спокойно, без лишнего внимания.',
+    title: 'Без лишнего внимания',
+    text: 'Детали задачи и данные клиента не разглашаем. Работаем спокойно и не привлекаем внимания.',
   },
   {
     icon: 'pin' as const,
@@ -70,6 +71,11 @@ const why = [
         ))
       }
     </ul>
+  </section>
+
+  {/* Отзывы — реальные обезличенные скриншоты */}
+  <section class="section container">
+    <Reviews heading="Отзывы клиентов" />
   </section>
 
   {/* О компании — с кадром */}
@@ -230,6 +236,7 @@ const why = [
   }
   .why__item {
     display: flex;
+    flex-direction: column;
     align-items: flex-start;
     gap: var(--space-4);
     padding: var(--space-6);

@@ -9,11 +9,14 @@ import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import PageHero from '../../components/PageHero.astro';
 import SectionBody from '../../components/SectionBody.astro';
 import FaqList from '../../components/FaqList.astro';
+import Reviews from '../../components/Reviews.astro';
 import LinkCardGrid from '../../components/LinkCardGrid.astro';
 import type { LinkCardItem } from '../../components/LinkCardGrid.astro';
 import CtaSection from '../../components/CtaSection.astro';
 import { services, otherServices } from '../../data/services';
 import { cities } from '../../data/cities';
+import { reviewShots } from '../../data/reviews';
+import { REVIEWS_ENABLED } from '../../config';
 import { serviceHubTitle, serviceHubDescription } from '../../lib/content';
 import { serviceSchema, faqSchema, breadcrumbSchema } from '../../lib/schema';
 import type { Service } from '../../data/types';
@@ -33,6 +36,7 @@ const { service } = Astro.props as Props;
 const path = `/uslugi/${service.slug}/`;
 const title = serviceHubTitle(service);
 const description = serviceHubDescription(service);
+const hasReviews = REVIEWS_ENABLED && reviewShots.some((r) => r.services?.includes(service.slug));
 
 const crumbs = [
   { name: 'Главная', href: '/' },
@@ -98,6 +102,14 @@ const schemas = [
     <hr class="hairline" />
     <FaqList items={service.faq} heading={`Вопросы про ${service.nameForUrlTitle}`} />
   </div>
+
+  {
+    hasReviews && (
+      <section class="container section">
+        <Reviews service={service.slug} heading="Отзывы по этой услуге" eyebrow="Реальный опыт" limit={2} />
+      </section>
+    )
+  }
 
   <section class="container section">
     <LinkCardGrid

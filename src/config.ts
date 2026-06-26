@@ -14,8 +14,8 @@ export const SITE_TAGLINE = 'Охрана и личная безопасност
  */
 export const TRUST_BLOCK_ENABLED = false;
 
-/** Отзывы/AggregateRating — только по факту реальных данных. */
-export const REVIEWS_ENABLED = false;
+/** Отзывы — реальные обезличенные скриншоты (без выдуманного AggregateRating). */
+export const REVIEWS_ENABLED = true;
 
 /** Кейсы — только обезличенные реальные. Пока контента нет. */
 export const CASES_ENABLED = false;

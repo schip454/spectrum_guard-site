@@ -1,21 +1,21 @@
 ---
 /**
- * `/otzyvy/` — реальные отзывы. Пока контента нет (REVIEWS_ENABLED=false): показываем
- * честное состояние и приглашение оставить отзыв, без выдуманных отзывов и без
- * AggregateRating. Schema Review/AggregateRating подключим строго по факту.
+ * `/otzyvy/` — реальные обезличенные отзывы (скриншоты). Если отзывов нет (флаг выключен) —
+ * честное приглашение оставить обратную связь. AggregateRating не выдумываем.
  */
 import Base from '../layouts/Base.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
 import PageHero from '../components/PageHero.astro';
+import Reviews from '../components/Reviews.astro';
 import CtaSection from '../components/CtaSection.astro';
-import { reviews } from '../data/reviews';
+import { reviewShots } from '../data/reviews';
 import { REVIEWS_ENABLED } from '../config';
 import { breadcrumbSchema } from '../lib/schema';
 
 const title = 'Отзывы — Spectrum Guard';
 const description =
-  'Отзывы клиентов Spectrum Guard. Делимся реальным опытом работы. Оставьте заявку или ' +
-  'напишите в Telegram — поможем с личной безопасностью в правовом поле.';
+  'Отзывы клиентов Spectrum Guard — реальный обезличенный опыт работы. Оставьте заявку или ' +
+  'напишите в Telegram — поможем с личной безопасностью.';
 const path = '/otzyvy/';
 
 const crumbs = [
@@ -23,8 +23,7 @@ const crumbs = [
   { name: 'Отзывы', href: path },
 ];
 
-const showReviews = REVIEWS_ENABLED && reviews.length > 0;
-const fmt = new Intl.DateTimeFormat('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
+const showReviews = REVIEWS_ENABLED && reviewShots.length > 0;
 ---
 
 <Base {title} {description} {path} schemas={[breadcrumbSchema(crumbs)]}>
@@ -33,27 +32,15 @@ const fmt = new Intl.DateTimeFormat('ru-RU', { day: 'numeric', month: 'long', ye
   <PageHero
     eyebrow="Отзывы"
     h1="Что говорят клиенты"
-    answer="Здесь — реальные отзывы о работе Spectrum Guard. Мы публикуем их по согласию клиентов и обезличенно, где это нужно для конфиденциальности. Хотите поделиться опытом или задать вопрос — напишите нам в Telegram или оставьте заявку."
+    answer="Здесь — реальные отзывы о работе Spectrum Guard. Мы публикуем их обезличенно: имена и аватары скрыты для конфиденциальности. Хотите поделиться опытом или задать вопрос — напишите нам в Telegram или оставьте заявку."
   />
 
   <section class="container section">
     {
       showReviews ? (
-        <ul class="reviews">
-          {reviews.map((r) => (
-            <li class="review perimeter">
-              <p class="review__text">{r.text}</p>
-              <p class="review__author mono">
-                {r.author}
-                {r.city ? ` · ${r.city}` : ''}
-                {r.date ? ` · ${fmt.format(new Date(r.date))}` : ''}
-              </p>
-            </li>
-          ))}
-        </ul>
+        <Reviews heading="Отзывы клиентов" eyebrow="Реальный опыт, обезличенно" />
       ) : (
         <div class="reviews-empty perimeter">
-          {/* TODO:CONTENT — реальные отзывы; включить REVIEWS_ENABLED, когда поступят */}
           <p class="reviews-empty__lead">
             Мы собираем отзывы клиентов и публикуем их по согласию. Если вы уже работали с нами —
             будем благодарны за обратную связь в Telegram.
@@ -70,23 +57,6 @@ const fmt = new Intl.DateTimeFormat('ru-RU', { day: 'numeric', month: 'long', ye
 </Base>
 
 <style>
-  .reviews {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: var(--col-gap);
-  }
-  .review {
-    padding: var(--space-8) var(--space-6) var(--space-6);
-    border: 1px solid var(--line);
-    background: var(--bg-800);
-  }
-  .review__text {
-    color: var(--text-100);
-  }
-  .review__author {
-    margin-top: var(--space-4);
-    color: var(--text-500);
-  }
   .reviews-empty {
     max-width: 64ch;
     padding: clamp(1.5rem, 4vw, 2.5rem);

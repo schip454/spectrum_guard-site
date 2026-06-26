@@ -1,0 +1,88 @@
+---
+/**
+ * Блок отзывов: реальные обезличенные скриншоты в сетке. Клик увеличивает (лайтбокс).
+ * Скриншоты не растягиваем (object-fit: contain), держим читаемость текста.
+ * Управляется флагом REVIEWS_ENABLED.
+ */
+import Media from './Media.astro';
+import { reviewShots, type ReviewShot } from '../data/reviews';
+import { REVIEWS_ENABLED } from '../config';
+
+interface Props {
+  heading?: string;
+  eyebrow?: string;
+  /** Если задан slug услуги — показываем только релевантные отзывы. */
+  service?: string;
+  /** Ограничить число (для компактного блока на странице услуги). */
+  limit?: number;
+}
+const { heading = 'Отзывы', eyebrow = 'Что говорят клиенты', service, limit } = Astro.props;
+
+let shots: ReviewShot[] = reviewShots;
+if (service) shots = shots.filter((r) => r.services?.includes(service));
+if (limit) shots = shots.slice(0, limit);
+
+const show = REVIEWS_ENABLED && shots.length > 0;
+---
+
+{
+  show && (
+    <section class="reviews">
+      {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+      <h2 class="reviews__heading">{heading}</h2>
+      <ul class="reviews__grid" data-zoom>
+        {shots.map((r) => (
+          <li class:list={['reviews__item', `reviews__item--${r.kind}`]}>
+            <figure class="reviews__figure perimeter">
+              <Media
+                src={r.image}
+                alt={r.alt}
+                sizes="(max-width: 720px) 100vw, 420px"
+                widths={[420, 760]}
+                quality={88}
+                loading="lazy"
+              />
+            </figure>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )
+}
+
+<style>
+  .reviews__heading {
+    margin: var(--space-2) 0 var(--space-6);
+  }
+  .reviews__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--col-gap);
+    align-items: start;
+  }
+  .reviews__item {
+    cursor: zoom-in;
+  }
+  .reviews__figure {
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--bg-800);
+    padding: var(--space-3);
+    overflow: hidden;
+  }
+  /* Скриншоты не растягиваем — показываем целиком, текст читаем. */
+  .reviews__figure :global(img) {
+    width: 100%;
+    height: auto;
+    border-radius: calc(var(--radius) - 1px);
+    transition: opacity var(--dur) var(--ease);
+  }
+  .reviews__item:hover .reviews__figure :global(img) {
+    opacity: 0.92;
+  }
+  @media (max-width: 640px) {
+    .reviews__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
