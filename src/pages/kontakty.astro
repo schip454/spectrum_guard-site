@@ -12,6 +12,7 @@ import CallbackCTA from '../components/CallbackCTA.astro';
 import Icon from '../components/icons/Icon.astro';
 import { contacts, telHref } from '../data/contacts';
 import { cities } from '../data/cities';
+import { SHOW_PHONE } from '../config';
 import { breadcrumbSchema } from '../lib/schema';
 
 const title = 'Контакты — Spectrum Guard';
@@ -38,13 +39,17 @@ const crumbs = [
   <section class="container section contacts">
     <div class="contacts__info">
       <ul class="contacts__list">
-        <li class="perimeter">
-          <Icon name="phone" size={22} class="contacts__icon" />
-          <div>
-            <p class="contacts__label mono">Телефон</p>
-            <a href={telHref} class="contacts__value">{contacts.phone.display}</a>
-          </div>
-        </li>
+        {
+          SHOW_PHONE && (
+            <li class="perimeter">
+              <Icon name="phone" size={22} class="contacts__icon" />
+              <div>
+                <p class="contacts__label mono">Телефон</p>
+                <a href={telHref} class="contacts__value">{contacts.phone.display}</a>
+              </div>
+            </li>
+          )
+        }
         <li class="perimeter">
           <Icon name="telegram" size={22} class="contacts__icon" />
           <div>

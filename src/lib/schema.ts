@@ -3,7 +3,7 @@
  * Сущности не дублируем: Organization задаётся один раз через @id и переиспользуется
  * как provider в Service.
  */
-import { SITE_URL, SITE_NAME } from '../config';
+import { SITE_URL, SITE_NAME, SHOW_PHONE } from '../config';
 import { contacts } from '../data/contacts';
 import { cities } from '../data/cities';
 import type { City, Service, Faq } from '../data/types';
@@ -15,8 +15,23 @@ export function abs(path: string): string {
   return new URL(path, SITE_URL).href;
 }
 
-/** Organization — сайтово (в Base через @id), areaServed = все 9 городов. */
+/** Organization — сайтово (в Base через @id), areaServed = все 9 городов.
+ *  Телефон в разметку кладём только если он реально показан на сайте (SHOW_PHONE). */
 export function organizationSchema() {
+  // ContactPoint без телефона: контакт через e-mail и Telegram (sameAs).
+  const contactPoint = SHOW_PHONE
+    ? {
+        '@type': 'ContactPoint',
+        telephone: contacts.phone.tel,
+        contactType: 'customer service',
+        availableLanguage: ['Russian'],
+      }
+    : {
+        '@type': 'ContactPoint',
+        email: contacts.email,
+        contactType: 'customer service',
+        availableLanguage: ['Russian'],
+      };
   return {
     '@type': 'Organization',
     '@id': ORG_ID,
@@ -25,15 +40,10 @@ export function organizationSchema() {
     description:
       'Охранное агентство Spectrum Guard: личная охрана, защита при угрозах, охрана при ' +
       'переезде, помощь при конфликте с соседями и охрана мероприятий в 9 городах России.',
-    telephone: contacts.phone.tel,
+    ...(SHOW_PHONE ? { telephone: contacts.phone.tel } : {}),
     email: contacts.email,
     sameAs: [contacts.telegram.url],
-    contactPoint: {
-      '@type': 'ContactPoint',
-      telephone: contacts.phone.tel,
-      contactType: 'customer service',
-      availableLanguage: ['Russian'],
-    },
+    contactPoint,
     areaServed: cities.map((c) => ({ '@type': 'City', name: c.nom })),
   };
 }

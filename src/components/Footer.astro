@@ -8,7 +8,7 @@ import Icon from './icons/Icon.astro';
 import TrustBlock from './TrustBlock.astro';
 import { servicesNav, citiesNav, footerLinks } from '../data/nav';
 import { contacts, telHref } from '../data/contacts';
-import { SITE_NAME } from '../config';
+import { SITE_NAME, SHOW_PHONE } from '../config';
 
 const year = new Date().getFullYear();
 ---
@@ -22,10 +22,14 @@ const year = new Date().getFullYear();
           Личная безопасность, сопровождение и охрана в правовом поле. Спокойно, конкретно,
           без лишнего шума.
         </p>
-        <a href={telHref} class="site-footer__phone">
-          <Icon name="phone" size={18} />
-          {contacts.phone.display}
-        </a>
+        {
+          SHOW_PHONE && (
+            <a href={telHref} class="site-footer__phone">
+              <Icon name="phone" size={18} />
+              {contacts.phone.display}
+            </a>
+          )
+        }
         <a href={`mailto:${contacts.email}`} class="site-footer__contact">
           <Icon name="mail" size={18} />
           {contacts.email}

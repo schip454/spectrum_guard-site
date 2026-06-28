@@ -8,6 +8,7 @@ import Icon from './icons/Icon.astro';
 import Button from './Button.astro';
 import { mainNav } from '../data/nav';
 import { contacts, telHref } from '../data/contacts';
+import { SHOW_PHONE } from '../config';
 
 const currentPath = Astro.url.pathname;
 const isActive = (href: string) =>
@@ -39,10 +40,25 @@ const isActive = (href: string) =>
     </nav>
 
     <div class="site-header__actions">
-      <a href={telHref} class="site-header__phone mono" aria-label={`Позвонить: ${contacts.phone.display}`}>
-        <Icon name="phone" size={16} />
-        <span>{contacts.phone.display}</span>
-      </a>
+      {
+        SHOW_PHONE ? (
+          <a href={telHref} class="site-header__phone mono" aria-label={`Позвонить: ${contacts.phone.display}`}>
+            <Icon name="phone" size={16} />
+            <span>{contacts.phone.display}</span>
+          </a>
+        ) : (
+          <a
+            href={contacts.telegram.url}
+            class="site-header__phone mono"
+            rel="noopener"
+            target="_blank"
+            aria-label="Написать в Telegram"
+          >
+            <Icon name="telegram" size={16} />
+            <span>Telegram</span>
+          </a>
+        )
+      }
       <Button href="#lead" variant="primary" size="md">Оставить заявку</Button>
     </div>
 
@@ -63,10 +79,19 @@ const isActive = (href: string) =>
             ))
           }
         </ul>
-        <a href={telHref} class="mobile-menu__phone">
-          <Icon name="phone" size={18} />
-          {contacts.phone.display}
-        </a>
+        {
+          SHOW_PHONE ? (
+            <a href={telHref} class="mobile-menu__phone">
+              <Icon name="phone" size={18} />
+              {contacts.phone.display}
+            </a>
+          ) : (
+            <a href={contacts.telegram.url} class="mobile-menu__phone" rel="noopener" target="_blank">
+              <Icon name="telegram" size={18} />
+              Написать в Telegram
+            </a>
+          )
+        }
         <Button href="#lead" variant="primary" size="lg" full>Оставить заявку</Button>
       </div>
     </details>

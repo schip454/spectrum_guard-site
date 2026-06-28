@@ -84,7 +84,7 @@ test.describe('Форма заявки', () => {
     await form.locator('input[name="name"]').fill('Тест');
     const contact = form.locator('[data-contact]');
     await contact.click();
-    await contact.type('9001234567');
+    await contact.pressSequentially('9001234567');
     await expect(contact).toHaveValue('+7 (900) 123-45-67');
   });
 
@@ -92,7 +92,7 @@ test.describe('Форма заявки', () => {
     await page.goto('/kontakty/');
     const form = page.locator('form[data-lead-form]:has([data-method-phone])').first();
     const contact = form.locator('[data-contact]');
-    await contact.type('9001234567');
+    await contact.pressSequentially('9001234567');
     await form.locator('[data-method-tg]').check();
     await expect(contact).toHaveValue('');
     await expect(contact).toHaveAttribute('placeholder', /@username/);
@@ -102,7 +102,7 @@ test.describe('Форма заявки', () => {
     await page.goto('/kontakty/');
     const form = page.locator('form[data-lead-form]:has([data-method-phone])').first();
     await form.locator('input[name="name"]').fill('Тест');
-    await form.locator('[data-contact]').type('9001234567');
+    await form.locator('[data-contact]').pressSequentially('9001234567');
     // НЕ ставим галочку согласия
     await form.locator('button[type="submit"]').click();
     const consent = form.locator('input[name="consent"]');
@@ -114,7 +114,7 @@ test.describe('Форма заявки', () => {
     await page.goto('/kontakty/');
     const form = page.locator('form[data-lead-form]:has([data-method-phone])').first();
     await form.locator('input[name="name"]').fill('Тест');
-    await form.locator('[data-contact]').type('9001234567');
+    await form.locator('[data-contact]').pressSequentially('9001234567');
     await form.locator('input[name="consent"]').check();
     await form.locator('button[type="submit"]').click();
     // Бэкенда на preview нет → ожидаем тост (успех или ошибка доставки), но не зависание.
