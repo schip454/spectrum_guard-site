@@ -16,9 +16,11 @@ export const services: Service[] = [
     intentLabel: 'Личная охрана',
     schemaType: 'ProtectiveService',
     icon: 'guard',
-    cardImage: 'escort/escort-walk-client-blur-01.webp',
+    cardImage: 'services/lichnaya-01.webp',
+    // Портрет хорош в карточке (4/3), но в широком герое режет головы — герой оставляем
+    // ландшафтным, а новый кадр добавляем в галерею.
     heroImage: 'moskva/msk-city-gwagon-01.webp',
-    gallery: ['moskva/msk-city-rangerover-01.webp', 'ekaterinburg/ekb-tower-vysotsky-02.webp'],
+    gallery: ['services/lichnaya-01.webp', 'moskva/msk-city-rangerover-01.webp', 'ekaterinburg/ekb-tower-vysotsky-02.webp'],
     tagline: 'Сопровождение и защита человека — на день, поездку или постоянно',
     price: 'от 25 000 ₽ — один сотрудник на день. В Москве — от 30 000 ₽',
     answerFirst:
@@ -184,8 +186,8 @@ export const services: Service[] = [
     intentLabel: 'Вам угрожают?',
     schemaType: 'ProtectiveService',
     icon: 'threat',
-    cardImage: 'neutral/neutral-convoy-highway-01.webp',
-    heroImage: 'neutral/neutral-convoy-highway-01.webp',
+    cardImage: 'services/ugrozy-01.webp',
+    heroImage: 'services/ugrozy-01.webp',
     gallery: ['neutral/neutral-forest-road-gwagon-01.webp'],
     tagline: 'Сопровождение и законная защита, когда поступают угрозы',
     price: 'от 50 000 ₽ — зависит от уровня риска и формата',
@@ -267,8 +269,8 @@ export const services: Service[] = [
     intentLabel: 'Шумные соседи',
     schemaType: 'ProtectiveService',
     icon: 'neighbors',
-    cardImage: 'neutral/neutral-winter-suvs-01.webp',
-    heroImage: 'neutral/neutral-winter-suvs-02.webp',
+    cardImage: 'services/sosedi-01.webp',
+    heroImage: 'services/sosedi-01.webp',
     tagline: 'Присутствие и сопровождение при напряжённых разговорах с соседями',
     price: 'от 30 000 ₽. В Москве — от 35 000 ₽',
     answerFirst:

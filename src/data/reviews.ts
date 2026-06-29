@@ -39,4 +39,16 @@ export const reviewShots: ReviewShot[] = [
     alt: 'Отзыв клиента: сработали оперативно и по делу',
     kind: 'chat',
   },
+  {
+    image: 'reviews/review-event-01.jpg',
+    alt: 'Заявка на охрану закрытого мероприятия: согласование состава и сроков',
+    kind: 'chat',
+    services: ['ohrana-meropriyatiy'],
+  },
+  {
+    image: 'reviews/review-event-02.jpg',
+    alt: 'Отзыв клиента после мероприятия: всё понравилось, спасибо',
+    kind: 'chat',
+    services: ['ohrana-meropriyatiy'],
+  },
 ];
