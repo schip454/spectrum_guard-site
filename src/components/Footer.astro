@@ -7,7 +7,7 @@ import Logo from './Logo.astro';
 import Icon from './icons/Icon.astro';
 import TrustBlock from './TrustBlock.astro';
 import { servicesNav, citiesNav, footerLinks } from '../data/nav';
-import { contacts, telHref } from '../data/contacts';
+import { contacts } from '../data/contacts';
 import { SITE_NAME, SHOW_PHONE } from '../config';
 
 const year = new Date().getFullYear();
@@ -23,12 +23,13 @@ const year = new Date().getFullYear();
           без лишнего шума.
         </p>
         {
-          SHOW_PHONE && (
-            <a href={telHref} class="site-footer__phone">
-              <Icon name="phone" size={18} />
-              {contacts.phone.display}
-            </a>
-          )
+          SHOW_PHONE &&
+            contacts.phones.map((p) => (
+              <a href={`tel:${p.tel}`} class="site-footer__phone">
+                <Icon name="phone" size={18} />
+                {p.display}
+              </a>
+            ))
         }
         <a href={`mailto:${contacts.email}`} class="site-footer__contact">
           <Icon name="mail" size={18} />
@@ -69,6 +70,19 @@ const year = new Date().getFullYear();
     </div>
 
     <TrustBlock />
+
+    <div class="site-footer__avito">
+      <span class="site-footer__avito-label mono">Мы на Авито</span>
+      <div class="site-footer__avito-links">
+        {
+          contacts.avito.map((a, i) => (
+            <a href={a.url} class="site-footer__avito-link" rel="noopener" target="_blank">
+              Профиль{contacts.avito.length > 1 ? ` ${i + 1}` : ''}
+            </a>
+          ))
+        }
+      </div>
+    </div>
 
     <div class="site-footer__bottom">
       <p class="mono">© {year} {SITE_NAME}</p>
@@ -143,6 +157,36 @@ const year = new Date().getFullYear();
     gap: var(--space-4);
   }
 
+  .site-footer__avito {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+    padding-top: var(--space-6);
+    margin-top: var(--space-6);
+    border-top: 1px solid var(--line);
+  }
+  .site-footer__avito-label {
+    color: var(--text-500);
+  }
+  .site-footer__avito-links {
+    display: flex;
+    gap: var(--space-3);
+  }
+  .site-footer__avito-link {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.4rem 0.9rem;
+    border: 1px solid var(--line-2);
+    border-radius: var(--radius);
+    color: var(--text-300);
+    font-size: var(--fs-small);
+    transition: border-color var(--dur) var(--ease), color var(--dur) var(--ease);
+  }
+  .site-footer__avito-link:hover {
+    border-color: var(--accent);
+    color: var(--text-100);
+  }
   .site-footer__bottom {
     display: flex;
     justify-content: space-between;

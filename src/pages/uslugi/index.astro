@@ -15,7 +15,8 @@ import { breadcrumbSchema } from '../../lib/schema';
 const title = 'Услуги — Spectrum Guard | личная охрана, защита, мероприятия';
 const description =
   'Услуги Spectrum Guard: личная охрана и сопровождение, охрана при переезде, защита при ' +
-  'угрозах, помощь при конфликте с соседями, охрана мероприятий. 9 городов России. Оставьте заявку.';
+  'угрозах, помощь при конфликте с соседями, охрана мероприятий, сопровождение сделок и ' +
+  'перевозка денег. 9 городов России и по запросу по всей стране. Оставьте заявку.';
 const path = '/uslugi/';
 
 const crumbs = [
@@ -30,7 +31,7 @@ const crumbs = [
   <PageHero
     eyebrow="Услуги"
     h1="Что мы делаем"
-    answer="Spectrum Guard закрывает пять направлений личной безопасности: личная охрана и сопровождение, охрана при переезде, защита при угрозах, помощь при конфликте с соседями и охрана мероприятий. Выберите направление — расскажем, что входит и как заказать."
+    answer="Spectrum Guard закрывает шесть направлений: личная охрана и сопровождение, охрана при переезде, защита при угрозах, помощь при конфликте с соседями, охрана мероприятий и сопровождение сделок с перевозкой денег. Выберите направление — расскажем, что входит и как заказать."
   />
 
   <section class="container section">
@@ -58,35 +59,17 @@ const crumbs = [
 <style>
   .uslugi-grid {
     display: grid;
-    grid-template-columns: repeat(6, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: var(--col-gap);
-  }
-  .uslugi-grid > li {
-    grid-column: span 2;
-  }
-  .uslugi-grid > li:nth-child(4),
-  .uslugi-grid > li:nth-child(5) {
-    grid-column: span 3;
   }
   @media (max-width: 900px) {
     .uslugi-grid {
       grid-template-columns: repeat(2, 1fr);
     }
-    .uslugi-grid > li,
-    .uslugi-grid > li:nth-child(4),
-    .uslugi-grid > li:nth-child(5) {
-      grid-column: span 1;
-    }
-    .uslugi-grid > li:nth-child(5) {
-      grid-column: span 2;
-    }
   }
   @media (max-width: 520px) {
     .uslugi-grid {
       grid-template-columns: 1fr;
-    }
-    .uslugi-grid > li:nth-child(5) {
-      grid-column: span 1;
     }
   }
 </style>

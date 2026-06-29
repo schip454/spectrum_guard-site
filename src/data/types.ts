@@ -58,6 +58,8 @@ export interface Service {
   problemQueries: string[];
   /** Правовая/смысловая рамка услуги — единым предложением. */
   legalFrame: string;
+  /** Ориентир по цене (строка для /ceny/ и блока «сколько стоит»). */
+  price: string;
   sections: ServiceSection[];
   faq: Faq[];
 }

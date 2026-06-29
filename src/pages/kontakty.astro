@@ -8,9 +8,8 @@ import Breadcrumbs from '../components/Breadcrumbs.astro';
 import PageHero from '../components/PageHero.astro';
 import LeadForm from '../components/LeadForm.astro';
 import TelegramCTA from '../components/TelegramCTA.astro';
-import CallbackCTA from '../components/CallbackCTA.astro';
 import Icon from '../components/icons/Icon.astro';
-import { contacts, telHref } from '../data/contacts';
+import { contacts } from '../data/contacts';
 import { cities } from '../data/cities';
 import { SHOW_PHONE } from '../config';
 import { breadcrumbSchema } from '../lib/schema';
@@ -44,8 +43,10 @@ const crumbs = [
             <li class="perimeter">
               <Icon name="phone" size={22} class="contacts__icon" />
               <div>
-                <p class="contacts__label mono">Телефон</p>
-                <a href={telHref} class="contacts__value">{contacts.phone.display}</a>
+                <p class="contacts__label mono">Телефон · звонок за консультацией</p>
+                {contacts.phones.map((p) => (
+                  <a href={`tel:${p.tel}`} class="contacts__value contacts__value--phone">{p.display}</a>
+                ))}
               </div>
             </li>
           )
@@ -82,11 +83,6 @@ const crumbs = [
 
       <div class="contacts__tg">
         <TelegramCTA variant="ghost" size="lg" full />
-      </div>
-
-      <div class="contacts__callback">
-        <p class="contacts__label mono">Заказать обратный звонок</p>
-        <CallbackCTA source="Страница контактов" />
       </div>
     </div>
 
@@ -141,6 +137,12 @@ const crumbs = [
   .contacts__value--plain {
     font-weight: 400;
     color: var(--text-300);
+  }
+  .contacts__value--phone {
+    display: block;
+  }
+  .contacts__value--phone + .contacts__value--phone {
+    margin-top: 2px;
   }
   .contacts__geo {
     margin-top: var(--space-8);

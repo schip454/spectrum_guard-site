@@ -33,11 +33,11 @@ const heroImage = 'hero/msk-kotelnicheskaya-sunset-hero.webp';
       <span class="perimeter__corner bl"></span>
       <span class="perimeter__corner br"></span>
 
-      <p class="hero__eyebrow mono">Охранное агентство · 9 городов России</p>
+      <p class="hero__eyebrow mono">Охранное агентство · 9 городов и по всей России</p>
       <h1 class="hero__title display">Мы заботимся<br />о вашей безопасности</h1>
       <p class="hero__lead">
-        Личная охрана, защита при угрозах, сопровождение при переезде, помощь с соседями и
-        охрана мероприятий. Спокойно, в правовом поле и конфиденциально.
+        Личная охрана, защита при угрозах, сопровождение при переезде, помощь с соседями,
+        охрана мероприятий и перевозка денег. Спокойно, в правовом поле и конфиденциально.
       </p>
 
       <div class="hero__actions">
@@ -53,6 +53,10 @@ const heroImage = 'hero/msk-kotelnicheskaya-sunset-hero.webp';
           <Icon name="telegram" size={18} /> Написать в Telegram
         </a>
       </div>
+
+      <p class="hero__note">
+        <Icon name="pin" size={16} /> Люди есть в каждом уголке страны — выезжаем по всей России.
+      </p>
     </div>
   </div>
 </section>
@@ -125,6 +129,18 @@ const heroImage = 'hero/msk-kotelnicheskaya-sunset-hero.webp';
     max-width: 50ch;
     color: var(--text-100);
     font-size: 1.125rem;
+  }
+  .hero__note {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-top: var(--space-6);
+    color: var(--text-300);
+    font-size: var(--fs-small);
+  }
+  .hero__note :global(svg) {
+    color: var(--accent);
+    flex-shrink: 0;
   }
 
   .hero__actions {

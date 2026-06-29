@@ -45,6 +45,9 @@ export const paths = {
 
   // Часы (режим работы 24/7).
   clock: `<circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/>`,
+
+  // Деньги/инкассация: банкнота с номиналом-кругом.
+  cash: `<rect x="3" y="6" width="18" height="12" rx="1.5"/><circle cx="12" cy="12" r="2.5"/><path d="M6.5 9.5h.01M17.5 14.5h.01"/>`,
 } as const;
 
 export type IconName = keyof typeof paths;

@@ -1,26 +1,39 @@
 /**
  * Контакты централизованы здесь. Меняется в одном месте — отражается на всём сайте.
- * Один корпоративный мобильный, e-mail, Telegram. Городских номеров нет (решение заказчика).
- *
- * TODO:CONTENT — финальные значения от заказчика (номер, e-mail, адрес Telegram-бота/канала).
+ * Телефоны для консультаций, e-mail, Telegram, профили на Авито.
  */
 
+export interface Phone {
+  display: string;
+  tel: string;
+}
+
 export const contacts = {
-  /** Корпоративный мобильный — единый, показываем везде. Формат для tel: без пробелов. */
-  phone: {
-    display: '+7 (900) 000-00-00', // TODO:CONTENT — финальный номер
-    tel: '+79000000000',
-  },
+  /** Телефоны для звонка за консультацией. Показываются в шапке/футере/контактах. */
+  phones: [
+    { display: '+7 (996) 172-13-47', tel: '+79961721347' },
+    { display: '+7 (902) 271-53-61', tel: '+79022715361' },
+  ] as Phone[],
   email: 'info@spectrumguard.ru', // TODO:CONTENT — финальный e-mail
   telegram: {
     /** Прямая ссылка для TelegramCTA. */
-    handle: 'spectrumguard', // TODO:CONTENT — бот или менеджер
+    handle: 'spectrumguard',
     url: 'https://t.me/spectrumguard',
     label: '@spectrumguard',
   },
+  /** Профили на Авито (две витрины). */
+  avito: [
+    {
+      label: 'Spectrum Guard на Авито',
+      url: 'https://www.avito.ru/brands/54fdddec4be05ec22d133c57d281ebdd?src=sharing',
+    },
+    {
+      label: 'Spectrum Guard на Авито (2)',
+      url: 'https://www.avito.ru/brands/6a47302350ee350e627f6e593dab26af?src=sharing',
+    },
+  ],
   /** Реквизиты — за флагом TRUST_BLOCK_ENABLED. Заполнить, когда появятся. */
   legal: {
-    // TODO:CONTENT — наименование, ИНН/ОГРН, лицензия. Пока скрыто флагом.
     name: null as string | null,
     inn: null as string | null,
     ogrn: null as string | null,
@@ -30,5 +43,8 @@ export const contacts = {
   hours: 'Круглосуточно, ежедневно',
 } as const;
 
-/** Готовая ссылка tel: */
-export const telHref = `tel:${contacts.phone.tel}`;
+/** Основной телефон (первый в списке). */
+export const primaryPhone = contacts.phones[0];
+
+/** Готовая ссылка tel: на основной номер. */
+export const telHref = `tel:${primaryPhone.tel}`;

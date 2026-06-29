@@ -6,7 +6,7 @@
  */
 import LeadForm from './LeadForm.astro';
 import Icon from './icons/Icon.astro';
-import { contacts, telHref } from '../data/contacts';
+import { contacts } from '../data/contacts';
 import { SHOW_PHONE } from '../config';
 
 interface Props {
@@ -53,11 +53,12 @@ const {
         <Icon name="telegram" size={18} /> Написать в Telegram
       </a>
       {
-        SHOW_PHONE && (
-          <a href={telHref} class="cta__direct-btn">
-            <Icon name="phone" size={18} /> Позвонить {contacts.phone.display}
-          </a>
-        )
+        SHOW_PHONE &&
+          contacts.phones.map((p) => (
+            <a href={`tel:${p.tel}`} class="cta__direct-btn">
+              <Icon name="phone" size={18} /> {p.display}
+            </a>
+          ))
       }
     </div>
   </div>

@@ -7,7 +7,7 @@ import Logo from './Logo.astro';
 import Icon from './icons/Icon.astro';
 import Button from './Button.astro';
 import { mainNav } from '../data/nav';
-import { contacts, telHref } from '../data/contacts';
+import { contacts } from '../data/contacts';
 import { SHOW_PHONE } from '../config';
 
 const currentPath = Astro.url.pathname;
@@ -42,18 +42,18 @@ const isActive = (href: string) =>
     <div class="site-header__actions">
       {
         SHOW_PHONE ? (
-          <a href={telHref} class="site-header__phone mono" aria-label={`Позвонить: ${contacts.phone.display}`}>
-            <Icon name="phone" size={16} />
-            <span>{contacts.phone.display}</span>
-          </a>
+          <div class="site-header__phones">
+            <span class="site-header__phones-label mono">Консультация</span>
+            <div class="site-header__phones-list">
+              {contacts.phones.map((p) => (
+                <a href={`tel:${p.tel}`} class="site-header__phone mono" aria-label={`Позвонить: ${p.display}`}>
+                  {p.display}
+                </a>
+              ))}
+            </div>
+          </div>
         ) : (
-          <a
-            href={contacts.telegram.url}
-            class="site-header__phone mono"
-            rel="noopener"
-            target="_blank"
-            aria-label="Написать в Telegram"
-          >
+          <a href={contacts.telegram.url} class="site-header__phone mono" rel="noopener" target="_blank" aria-label="Написать в Telegram">
             <Icon name="telegram" size={16} />
             <span>Telegram</span>
           </a>
@@ -80,18 +80,18 @@ const isActive = (href: string) =>
           }
         </ul>
         {
-          SHOW_PHONE ? (
-            <a href={telHref} class="mobile-menu__phone">
-              <Icon name="phone" size={18} />
-              {contacts.phone.display}
-            </a>
-          ) : (
-            <a href={contacts.telegram.url} class="mobile-menu__phone" rel="noopener" target="_blank">
-              <Icon name="telegram" size={18} />
-              Написать в Telegram
-            </a>
-          )
+          SHOW_PHONE &&
+            contacts.phones.map((p) => (
+              <a href={`tel:${p.tel}`} class="mobile-menu__phone">
+                <Icon name="phone" size={18} />
+                {p.display}
+              </a>
+            ))
         }
+        <a href={contacts.telegram.url} class="mobile-menu__phone" rel="noopener" target="_blank">
+          <Icon name="telegram" size={18} />
+          Написать в Telegram
+        </a>
         <Button href="#lead" variant="primary" size="lg" full>Оставить заявку</Button>
       </div>
     </details>
@@ -154,16 +154,38 @@ const isActive = (href: string) =>
     align-items: center;
     gap: var(--space-4);
   }
+  .site-header__phones {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    line-height: 1.1;
+  }
+  .site-header__phones-label {
+    color: var(--text-500);
+    font-size: 0.625rem;
+  }
+  .site-header__phones-list {
+    display: flex;
+    gap: var(--space-3);
+  }
   .site-header__phone {
     display: inline-flex;
     align-items: center;
     gap: var(--space-2);
     color: var(--text-100);
     text-transform: none;
-    letter-spacing: 0.02em;
+    letter-spacing: 0.01em;
+    font-size: var(--fs-small);
   }
   .site-header__phone:hover {
     color: var(--accent);
+  }
+  @media (max-width: 1180px) {
+    .site-header__phones-list {
+      flex-direction: column;
+      gap: 0;
+      align-items: flex-end;
+    }
   }
 
   /* ---------- Мобильное меню ---------- */

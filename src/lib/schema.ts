@@ -18,20 +18,22 @@ export function abs(path: string): string {
 /** Organization — сайтово (в Base через @id), areaServed = все 9 городов.
  *  Телефон в разметку кладём только если он реально показан на сайте (SHOW_PHONE). */
 export function organizationSchema() {
-  // ContactPoint без телефона: контакт через e-mail и Telegram (sameAs).
+  // ContactPoint: телефоны для консультаций (если показываем) + e-mail.
   const contactPoint = SHOW_PHONE
-    ? {
+    ? contacts.phones.map((p) => ({
         '@type': 'ContactPoint',
-        telephone: contacts.phone.tel,
+        telephone: p.tel,
         contactType: 'customer service',
         availableLanguage: ['Russian'],
-      }
-    : {
-        '@type': 'ContactPoint',
-        email: contacts.email,
-        contactType: 'customer service',
-        availableLanguage: ['Russian'],
-      };
+      }))
+    : [
+        {
+          '@type': 'ContactPoint',
+          email: contacts.email,
+          contactType: 'customer service',
+          availableLanguage: ['Russian'],
+        },
+      ];
   return {
     '@type': 'Organization',
     '@id': ORG_ID,
@@ -39,10 +41,11 @@ export function organizationSchema() {
     url: SITE_URL + '/',
     description:
       'Охранное агентство Spectrum Guard: личная охрана, защита при угрозах, охрана при ' +
-      'переезде, помощь при конфликте с соседями и охрана мероприятий в 9 городах России.',
-    ...(SHOW_PHONE ? { telephone: contacts.phone.tel } : {}),
+      'переезде, помощь при конфликте с соседями, охрана мероприятий и сопровождение сделок ' +
+      'в 9 городах России и по запросу по всей стране.',
+    ...(SHOW_PHONE ? { telephone: contacts.phones[0].tel } : {}),
     email: contacts.email,
-    sameAs: [contacts.telegram.url],
+    sameAs: [contacts.telegram.url, ...contacts.avito.map((a) => a.url)],
     contactPoint,
     areaServed: cities.map((c) => ({ '@type': 'City', name: c.nom })),
   };

@@ -54,7 +54,7 @@ const why = [
   {/* Один сильный блок услуг — карточки с реальными кадрами */}
   <section class="section container" aria-labelledby="services-heading">
     <p class="eyebrow">Что мы делаем</p>
-    <h2 id="services-heading" class="home-h2">Пять направлений</h2>
+    <h2 id="services-heading" class="home-h2">Шесть направлений</h2>
     <ul class="services-grid">
       {
         services.map((s, i) => (
@@ -85,7 +85,7 @@ const why = [
         <p class="eyebrow">О компании</p>
         <h2 id="about-heading" class="home-h2">Охрана под конкретную задачу</h2>
         <AnswerFirst
-          text="Spectrum Guard — охранное агентство для частных клиентов и бизнеса. Помогаем там, где нужна безопасность человека: личная охрана и сопровождение, защита при угрозах, спокойный переезд при конфликте, помощь с соседями и охрана мероприятий. Работаем в девяти городах России. Оставьте заявку — свяжемся и подберём формат под вашу ситуацию."
+          text="Spectrum Guard — охранное агентство для частных клиентов и бизнеса. Помогаем там, где нужна безопасность человека: личная охрана и сопровождение, защита при угрозах, спокойный переезд, помощь с соседями, охрана мероприятий и сопровождение сделок с перевозкой денег. Работаем в девяти городах России, а по запросу выезжаем по всей стране."
         />
         <p class="about-home__more">
           Подбираем формат под ситуацию — от разовой смены до постоянного режима. Сначала
@@ -132,6 +132,7 @@ const why = [
       <div>
         <p class="eyebrow">География</p>
         <h2 id="geo-heading" class="home-h2">9 городов России</h2>
+        <p class="geo-note">Остальные города — по запросу. Выезжаем в любые уголки страны.</p>
       </div>
       <a href="/goroda/" class="geo-head__all mono">Все города <Icon name="arrow" size={16} /></a>
     </div>
@@ -153,40 +154,20 @@ const why = [
     margin: var(--space-2) 0 var(--space-6);
   }
 
-  /* 3 + 2: первые три по трети, последние две — крупнее (по половине).
-     Картинки и текст получают воздух, ничего не сжато. */
+  /* 6 направлений — ровная сетка 3×2, картинки и текст с воздухом. */
   .services-grid {
     display: grid;
-    grid-template-columns: repeat(6, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: var(--col-gap);
-  }
-  .services-grid > li {
-    grid-column: span 2;
-  }
-  .services-grid > li:nth-child(4),
-  .services-grid > li:nth-child(5) {
-    grid-column: span 3;
   }
   @media (max-width: 900px) {
     .services-grid {
       grid-template-columns: repeat(2, 1fr);
     }
-    .services-grid > li,
-    .services-grid > li:nth-child(4),
-    .services-grid > li:nth-child(5) {
-      grid-column: span 1;
-    }
-    /* пятая карточка одна в ряду — делаем её во всю ширину */
-    .services-grid > li:nth-child(5) {
-      grid-column: span 2;
-    }
   }
   @media (max-width: 520px) {
     .services-grid {
       grid-template-columns: 1fr;
-    }
-    .services-grid > li:nth-child(5) {
-      grid-column: span 1;
     }
   }
 
@@ -277,7 +258,12 @@ const why = [
     margin-bottom: var(--space-6);
   }
   .geo-head .home-h2 {
-    margin-bottom: 0;
+    margin-bottom: var(--space-2);
+  }
+  .geo-note {
+    color: var(--text-300);
+    font-size: var(--fs-small);
+    max-width: 40ch;
   }
   .geo-head__all {
     display: inline-flex;
