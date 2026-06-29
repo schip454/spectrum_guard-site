@@ -8,6 +8,7 @@
 import Media from './Media.astro';
 import Icon from './icons/Icon.astro';
 import { contacts } from '../data/contacts';
+import { SHOW_PHONE } from '../config';
 
 const heroImage = 'hero/msk-kotelnicheskaya-sunset-hero.webp';
 ---
@@ -58,6 +59,23 @@ const heroImage = 'hero/msk-kotelnicheskaya-sunset-hero.webp';
         <Icon name="pin" size={16} /> Люди есть в каждом уголке страны — выезжаем по всей России.
       </p>
     </div>
+
+    {
+      SHOW_PHONE && (
+        <aside class="hero__aside">
+          <p class="hero__aside-label mono">Звонок за консультацией</p>
+          <div class="hero__aside-phones">
+            {contacts.phones.map((p) => (
+              <a href={`tel:${p.tel}`} class="hero__phone">
+                <span class="hero__phone-icon"><Icon name="phone" size={18} /></span>
+                <span class="hero__phone-num">{p.display}</span>
+              </a>
+            ))}
+          </div>
+          <p class="hero__aside-hint mono">Ответим и подскажем формат</p>
+        </aside>
+      )
+    }
   </div>
 </section>
 
@@ -92,6 +110,10 @@ const heroImage = 'hero/msk-kotelnicheskaya-sunset-hero.webp';
     position: relative;
     z-index: 1;
     width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: clamp(1.5rem, 4vw, 3.5rem);
   }
 
   .hero__frame {
@@ -141,6 +163,57 @@ const heroImage = 'hero/msk-kotelnicheskaya-sunset-hero.webp';
   .hero__note :global(svg) {
     color: var(--accent);
     flex-shrink: 0;
+  }
+
+  /* Телефоны справа от фрейма (на широких экранах) */
+  .hero__aside {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding: var(--space-6);
+    border: 1px solid var(--line-2);
+    border-radius: var(--radius);
+    background: color-mix(in srgb, var(--bg-900) 55%, transparent);
+    backdrop-filter: blur(3px);
+  }
+  .hero__aside-label {
+    color: var(--accent);
+  }
+  .hero__aside-phones {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+  .hero__phone {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3);
+    color: var(--text-100);
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    transition: color var(--dur) var(--ease);
+  }
+  .hero__phone-icon {
+    display: inline-flex;
+    padding: var(--space-2);
+    border: 1px solid var(--line-2);
+    border-radius: var(--radius);
+    color: var(--accent);
+  }
+  .hero__phone:hover {
+    color: var(--accent);
+  }
+  .hero__aside-hint {
+    color: var(--text-500);
+    text-transform: none;
+    letter-spacing: 0.01em;
+  }
+  @media (max-width: 980px) {
+    .hero__aside {
+      display: none;
+    }
   }
 
   .hero__actions {

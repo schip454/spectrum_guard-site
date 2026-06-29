@@ -42,16 +42,21 @@ const isActive = (href: string) =>
     <div class="site-header__actions">
       {
         SHOW_PHONE ? (
-          <div class="site-header__phones">
-            <span class="site-header__phones-label mono">Консультация</span>
-            <div class="site-header__phones-list">
+          <details class="phones-dd">
+            <summary class="phones-dd__toggle" aria-label="Показать телефоны">
+              <Icon name="phone" size={16} />
+              <span>Телефоны</span>
+              <span class="phones-dd__chev" aria-hidden="true" />
+            </summary>
+            <div class="phones-dd__panel">
+              <p class="phones-dd__label mono">Звонок за консультацией</p>
               {contacts.phones.map((p) => (
-                <a href={`tel:${p.tel}`} class="site-header__phone mono" aria-label={`Позвонить: ${p.display}`}>
-                  {p.display}
+                <a href={`tel:${p.tel}`} class="phones-dd__num">
+                  <Icon name="phone" size={16} /> {p.display}
                 </a>
               ))}
             </div>
-          </div>
+          </details>
         ) : (
           <a href={contacts.telegram.url} class="site-header__phone mono" rel="noopener" target="_blank" aria-label="Написать в Telegram">
             <Icon name="telegram" size={16} />
@@ -109,6 +114,20 @@ const isActive = (href: string) =>
       if (e.key === 'Escape') menu.removeAttribute('open');
     });
   }
+
+  // Дропдаун телефонов: закрытие по Esc, клику вне и по выбору номера.
+  const phonesDd = document.querySelector<HTMLDetailsElement>('.phones-dd');
+  if (phonesDd) {
+    phonesDd.querySelectorAll('a').forEach((a) =>
+      a.addEventListener('click', () => phonesDd.removeAttribute('open'))
+    );
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') phonesDd.removeAttribute('open');
+    });
+    document.addEventListener('click', (e) => {
+      if (phonesDd.open && !phonesDd.contains(e.target as Node)) phonesDd.removeAttribute('open');
+    });
+  }
 </script>
 
 <style>
@@ -154,38 +173,85 @@ const isActive = (href: string) =>
     align-items: center;
     gap: var(--space-4);
   }
-  .site-header__phones {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    line-height: 1.1;
-  }
-  .site-header__phones-label {
-    color: var(--text-500);
-    font-size: 0.625rem;
-  }
-  .site-header__phones-list {
-    display: flex;
-    gap: var(--space-3);
-  }
   .site-header__phone {
     display: inline-flex;
     align-items: center;
     gap: var(--space-2);
     color: var(--text-100);
-    text-transform: none;
-    letter-spacing: 0.01em;
     font-size: var(--fs-small);
   }
   .site-header__phone:hover {
     color: var(--accent);
   }
-  @media (max-width: 1180px) {
-    .site-header__phones-list {
-      flex-direction: column;
-      gap: 0;
-      align-items: flex-end;
-    }
+
+  /* ---------- Дропдаун телефонов ---------- */
+  .phones-dd {
+    position: relative;
+  }
+  .phones-dd__toggle {
+    list-style: none;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: 0.55rem 0.9rem;
+    border: 1px solid var(--line-2);
+    border-radius: var(--radius);
+    color: var(--text-100);
+    font-size: var(--fs-small);
+    cursor: pointer;
+    transition: border-color var(--dur) var(--ease), color var(--dur) var(--ease);
+  }
+  .phones-dd__toggle::-webkit-details-marker {
+    display: none;
+  }
+  .phones-dd__toggle:hover {
+    border-color: var(--accent);
+  }
+  .phones-dd__chev {
+    width: 7px;
+    height: 7px;
+    border-right: 1.5px solid var(--text-300);
+    border-bottom: 1.5px solid var(--text-300);
+    transform: rotate(45deg) translate(-1px, -1px);
+    transition: transform var(--dur) var(--ease);
+  }
+  .phones-dd[open] .phones-dd__chev {
+    transform: rotate(-135deg) translate(-1px, -1px);
+  }
+  .phones-dd__panel {
+    position: absolute;
+    top: calc(100% + var(--space-2));
+    right: 0;
+    z-index: var(--z-overlay);
+    min-width: 230px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    padding: var(--space-4);
+    background: var(--bg-700);
+    border: 1px solid var(--line-2);
+    border-radius: var(--radius);
+  }
+  .phones-dd__label {
+    color: var(--text-500);
+    margin-bottom: var(--space-2);
+  }
+  .phones-dd__num {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius);
+    color: var(--text-100);
+    font-weight: 500;
+    transition: background-color var(--dur) var(--ease), color var(--dur) var(--ease);
+  }
+  .phones-dd__num :global(svg) {
+    color: var(--accent);
+  }
+  .phones-dd__num:hover {
+    background: var(--bg-800);
+    color: var(--accent);
   }
 
   /* ---------- Мобильное меню ---------- */
