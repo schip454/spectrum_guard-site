@@ -76,7 +76,16 @@ const jsonLd = graph(organizationSchema(), ...schemas);
           },
           { rootMargin: '0px 0px -10% 0px', threshold: 0.1 }
         );
-        els.forEach((el) => io.observe(el));
+        // Лёгкий стаггер для соседних элементов (карточки в сетке появляются волной).
+        els.forEach((el) => {
+          const parent = el.parentElement;
+          if (parent) {
+            const sibs = Array.from(parent.children).filter((c) => c.classList.contains('reveal'));
+            const idx = sibs.indexOf(el);
+            if (idx > 0) (el as HTMLElement).style.transitionDelay = Math.min(idx * 70, 280) + 'ms';
+          }
+          io.observe(el);
+        });
       }
     </script>
   </body>

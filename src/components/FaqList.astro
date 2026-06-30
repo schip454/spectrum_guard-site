@@ -17,7 +17,7 @@ const { items, heading = 'Частые вопросы' } = Astro.props;
   <div class="faq__list">
     {
       items.map((item, i) => (
-        <details class="faq__item">
+        <details class="faq__item reveal">
           <summary class="faq__q">
             <span class="faq__n mono">{String(i + 1).padStart(2, '0')}</span>
             <span class="faq__q-text">{item.q}</span>

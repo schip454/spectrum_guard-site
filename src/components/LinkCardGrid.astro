@@ -28,7 +28,7 @@ const { heading, items, eyebrow, columns = 3 } = Astro.props;
   <ul class:list={['links__grid', `links__grid--${columns}`]}>
     {
       items.map((item) => (
-        <li>
+        <li class="reveal">
           <a href={item.href} class="link-card">
             {item.icon && <Icon name={item.icon} size={22} class="link-card__icon" />}
             <span class="link-card__body">
