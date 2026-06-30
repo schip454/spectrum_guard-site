@@ -17,7 +17,7 @@ import { breadcrumbSchema } from '../lib/schema';
 const title = 'Контакты — Spectrum Guard';
 const description =
   'Связаться со Spectrum Guard: корпоративный телефон, e-mail, Telegram. Оставьте заявку — ' +
-  'перезвоним или ответим в мессенджере. Работаем в 9 городах России, заявки 24/7.';
+  'перезвоним или ответим в мессенджере. 9 ключевых городов и выезд по всей России, заявки 24/7.';
 const path = '/kontakty/';
 
 const crumbs = [
@@ -32,7 +32,7 @@ const crumbs = [
   <PageHero
     eyebrow="Контакты"
     h1="Связаться со Spectrum Guard"
-    answer="Оставьте заявку на сайте, напишите в Telegram или закажите обратный звонок — перезвоним или ответим в мессенджере. Работаем в девяти городах России, заявки принимаем круглосуточно."
+    answer="Оставьте заявку на сайте, напишите в Telegram или закажите обратный звонок — перезвоним или ответим в мессенджере. Собственная команда в 9 ключевых городах, по запросу выезжаем в любой регион России. Заявки принимаем круглосуточно."
   />
 
   <section class="container section contacts">
@@ -77,8 +77,9 @@ const crumbs = [
       </ul>
 
       <div class="contacts__geo">
-        <p class="contacts__label mono">География</p>
+        <p class="contacts__label mono">География · 9 ключевых городов</p>
         <p class="contacts__geo-text">{cities.map((c) => c.nom).join(' · ')}</p>
+        <p class="contacts__geo-note">По запросу выезжаем в любой регион России.</p>
       </div>
 
       <div class="contacts__tg">
@@ -149,6 +150,11 @@ const crumbs = [
   }
   .contacts__geo-text {
     color: var(--text-300);
+    margin-top: var(--space-2);
+  }
+  .contacts__geo-note {
+    color: var(--text-500);
+    font-size: var(--fs-small);
     margin-top: var(--space-2);
   }
   .contacts__tg {

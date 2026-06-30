@@ -11,9 +11,13 @@ import { cities } from '../data/cities';
 interface Props {
   source?: string;
   id?: string;
+  /** 'full' — полная форма; 'callback' — только телефон (обратный звонок). */
+  variant?: 'full' | 'callback';
+  submitLabel?: string;
 }
-const { source = '', id = 'lead-form' } = Astro.props;
+const { source = '', id = 'lead-form', variant = 'full', submitLabel } = Astro.props;
 const cityListId = `cities-${id}`;
+const isCallback = variant === 'callback';
 ---
 
 <form class="lead-form" id={id} action="/api/lead.php" method="post" data-lead-form>
@@ -23,54 +27,77 @@ const cityListId = `cities-${id}`;
   </div>
   <input type="hidden" name="_ts" value="" data-ts />
 
-  <label class="field">
-    <span class="field__label">Как к вам обращаться</span>
-    <input type="text" name="name" required autocomplete="name" placeholder="Имя" />
-  </label>
+  {
+    isCallback ? (
+      <Fragment>
+        <input type="hidden" name="name" value="Заявка на звонок" />
+        <input type="hidden" name="method" value="phone" />
+        <label class="field">
+          <span class="field__label">Ваш телефон</span>
+          <input
+            type="tel"
+            name="contact"
+            required
+            autocomplete="tel"
+            placeholder="+7 (___) ___-__-__"
+            data-contact
+            aria-label="Телефон для связи"
+          />
+        </label>
+      </Fragment>
+    ) : (
+      <Fragment>
+        <label class="field">
+          <span class="field__label">Как к вам обращаться</span>
+          <input type="text" name="name" required autocomplete="name" placeholder="Имя" />
+        </label>
 
-  <fieldset class="field lead-form__method">
-    <legend class="field__label">Как с вами связаться</legend>
-    <div class="seg" role="radiogroup" aria-label="Способ связи">
-      <label class="seg__opt">
-        <input type="radio" name="method" value="phone" checked data-method-phone />
-        <span>Телефон</span>
-      </label>
-      <label class="seg__opt">
-        <input type="radio" name="method" value="telegram" data-method-tg />
-        <span>Telegram</span>
-      </label>
-    </div>
-    <input
-      type="tel"
-      name="contact"
-      required
-      autocomplete="tel"
-      placeholder="+7 (___) ___-__-__"
-      data-contact
-      aria-label="Телефон для связи"
-    />
-    <p class="lead-form__hint mono" data-contact-hint>Введите номер телефона</p>
-  </fieldset>
+        <fieldset class="field lead-form__method">
+          <legend class="field__label">Как с вами связаться</legend>
+          <div class="seg" role="radiogroup" aria-label="Способ связи">
+            <label class="seg__opt">
+              <input type="radio" name="method" value="phone" checked data-method-phone />
+              <span>Телефон</span>
+            </label>
+            <label class="seg__opt">
+              <input type="radio" name="method" value="telegram" data-method-tg />
+              <span>Telegram</span>
+            </label>
+          </div>
+          <input
+            type="tel"
+            name="contact"
+            required
+            autocomplete="tel"
+            placeholder="+7 (___) ___-__-__"
+            data-contact
+            aria-label="Телефон для связи"
+          />
+          <p class="lead-form__hint mono" data-contact-hint>Введите номер телефона</p>
+        </fieldset>
 
-  <label class="field">
-    <span class="field__label">Город</span>
-    <input
-      type="text"
-      name="city"
-      list={cityListId}
-      autocomplete="address-level2"
-      placeholder="Ваш город"
-      data-city
-    />
-    <datalist id={cityListId}>
-      {cities.map((c) => <option value={c.nom} />)}
-    </datalist>
-  </label>
+        <label class="field">
+          <span class="field__label">Город</span>
+          <input
+            type="text"
+            name="city"
+            list={cityListId}
+            autocomplete="address-level2"
+            placeholder="Ваш город"
+            data-city
+          />
+          <datalist id={cityListId}>
+            {cities.map((c) => <option value={c.nom} />)}
+          </datalist>
+        </label>
 
-  <label class="field">
-    <span class="field__label">Коротко о ситуации <span class="field__opt">— необязательно</span></span>
-    <textarea name="message" rows={3} placeholder="Что нужно"></textarea>
-  </label>
+        <label class="field">
+          <span class="field__label">Коротко о ситуации <span class="field__opt">— необязательно</span></span>
+          <textarea name="message" rows={3} placeholder="Что нужно"></textarea>
+        </label>
+      </Fragment>
+    )
+  }
 
   <label class="consent">
     <input type="checkbox" name="consent" required />
@@ -80,8 +107,10 @@ const cityListId = `cities-${id}`;
     </span>
   </label>
 
-  <Button type="submit" variant="primary" size="lg" full>Оставить заявку</Button>
-  <p class="lead-form__note mono">Перезвоним или напишем. Без обязательств.</p>
+  <Button type="submit" variant="primary" size="lg" full>{submitLabel ?? 'Оставить заявку'}</Button>
+  <p class="lead-form__note mono">
+    {isCallback ? 'Перезвоним в ближайшее время.' : 'Перезвоним или напишем. Без обязательств.'}
+  </p>
 </form>
 
 <script>

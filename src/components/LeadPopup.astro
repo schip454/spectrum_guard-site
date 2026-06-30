@@ -22,13 +22,13 @@ import { contacts } from '../data/contacts';
     </button>
 
     <p class="lpop__eyebrow mono">Бесплатная консультация</p>
-    <h2 class="lpop__title">Обсудим вашу задачу по безопасности?</h2>
+    <h2 class="lpop__title">Оставьте номер — мы перезвоним</h2>
     <p class="lpop__text">
-      Оставьте заявку — перезвоним или ответим в Telegram, подберём формат и сориентируем по
-      стоимости. Без обязательств.
+      Бесплатно проконсультируем по вашей задаче, подберём формат и сориентируем по стоимости.
+      Без обязательств.
     </p>
 
-    <LeadForm source="Попап (20 сек)" id="lead-form-popup" />
+    <LeadForm source="Попап (20 сек)" id="lead-form-popup" variant="callback" submitLabel="Перезвоните мне" />
 
     <a class="lpop__tg" href={contacts.telegram.url} rel="noopener" target="_blank">
       <Icon name="telegram" size={18} /> Или напишите в Telegram
