@@ -59,6 +59,8 @@ const jsonLd = graph(organizationSchema(), ...schemas);
     <CookieConsent />
     <Lightbox />
     <LeadPopup />
+    {/* Единый тост статуса заявки (используется любой формой LeadForm на странице) */}
+    <div class="lead-toast" data-toast role="status" aria-live="polite" hidden></div>
 
     <script>
       // Появление блоков при скролле. Включаем режим только при наличии JS и если

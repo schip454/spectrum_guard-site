@@ -258,6 +258,37 @@ small {
   border-top: 1px solid var(--line);
 }
 
+/* ---------- Тост статуса заявки (единый на страницу) ---------- */
+.lead-toast {
+  position: fixed;
+  left: 50%;
+  bottom: var(--space-8);
+  transform: translate(-50%, 1rem);
+  z-index: var(--z-toast);
+  max-width: min(92vw, 420px);
+  padding: var(--space-4) var(--space-6);
+  background: var(--bg-700);
+  border: 1px solid var(--line-2);
+  border-left: 3px solid var(--ok);
+  border-radius: var(--radius);
+  color: var(--text-100);
+  font-size: var(--fs-small);
+  opacity: 0;
+  transition:
+    opacity var(--dur) var(--ease),
+    transform var(--dur) var(--ease);
+}
+.lead-toast[hidden] {
+  display: none;
+}
+.lead-toast[data-ok='false'] {
+  border-left-color: var(--danger);
+}
+.lead-toast.is-visible {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
 /* ---------- Появление блоков при скролле (прогрессивное улучшение) ----------
    Скрываем только когда JS включил режим (body.reveal-on) — без JS контент виден. */
 .reveal-on .reveal {
