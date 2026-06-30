@@ -45,11 +45,11 @@ const crumbs = [
   { name: city.nom, href: path },
 ];
 
-// 5 услуг в этом городе.
+// Услуги (ведут на национальные страницы услуг).
 const serviceLinks: LinkCardItem[] = services.map((s) => ({
-  title: `${s.nameNom} ${city.prep}`,
+  title: s.nameNom,
   sub: s.tagline,
-  href: `/${city.slug}/${s.slug}/`,
+  href: `/uslugi/${s.slug}/`,
   icon: s.icon as LinkCardItem['icon'],
 }));
 

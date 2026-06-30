@@ -44,10 +44,11 @@ const crumbs = [
   { name: service.nameNom, href: path },
 ];
 
-// «Выберите город» → гео-страницы этой услуги.
+// «Города» → страницы городов (обзор услуг в городе).
 const cityLinks: LinkCardItem[] = cities.map((c) => ({
-  title: `${service.nameNom} ${c.prep}`,
-  href: `/${c.slug}/${service.slug}/`,
+  title: c.nom,
+  sub: c.region !== c.nom ? c.region : undefined,
+  href: `/${c.slug}/`,
   icon: 'pin',
 }));
 
@@ -113,10 +114,10 @@ const schemas = [
 
   <section class="container section">
     <LinkCardGrid
-      eyebrow="Выберите город"
-      heading={`${service.nameNom} в вашем городе`}
+      eyebrow="География"
+      heading="Города присутствия"
       items={cityLinks}
-      columns={2}
+      columns={3}
     />
   </section>
 

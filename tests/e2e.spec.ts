@@ -12,7 +12,17 @@ function trackErrors(page: Page) {
   return errors;
 }
 
-const KEY_PAGES = ['/', '/uslugi/', '/uslugi/lichnaya-ohrana/', '/moskva/lichnaya-ohrana/', '/goroda/', '/voprosy/', '/otzyvy/', '/kontakty/'];
+const KEY_PAGES = ['/', '/uslugi/', '/uslugi/lichnaya-ohrana/', '/uslugi/perevozka-cennyh-gruzov/', '/moskva/', '/goroda/', '/voprosy/', '/otzyvy/', '/kontakty/'];
+
+// Гео-подсказка — модалка при первом визите; в тестах её отключаем (выбор города уже сделан),
+// чтобы оверлей не мешал кликам. Cookie-баннер не трогаем (его проверяет отдельный тест).
+test.beforeEach(async ({ page }) => {
+  await page.addInitScript(() => {
+    try {
+      localStorage.setItem('sg-city', 'skip');
+    } catch {}
+  });
+});
 
 test.describe('Дымовые проверки + консоль', () => {
   for (const path of KEY_PAGES) {
@@ -37,15 +47,15 @@ test('главная: скриншот первого экрана', async ({ pa
 });
 
 test('кликабельность сайта не заблокирована (регресс лайтбокса)', async ({ page }) => {
-  await page.goto('/moskva/lichnaya-ohrana/');
+  await page.goto('/uslugi/lichnaya-ohrana/');
   // Если бы оверлей лайтбокса перехватывал клики, переход бы не сработал.
-  const crumb = page.getByRole('link', { name: 'Москва', exact: true }).first();
+  const crumb = page.getByRole('link', { name: 'Услуги', exact: true }).first();
   await crumb.click();
-  await expect(page).toHaveURL(/\/moskva\/$/);
+  await expect(page).toHaveURL(/\/uslugi\/$/);
 });
 
 test('лайтбокс открывается и закрывается', async ({ page }) => {
-  await page.goto('/moskva/lichnaya-ohrana/');
+  await page.goto('/moskva/');
   const lightbox = page.locator('[data-lightbox]');
   await expect(lightbox).toBeHidden();
   // Кликаем первую картинку галереи (внутри [data-zoom]).

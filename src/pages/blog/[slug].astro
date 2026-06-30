@@ -33,15 +33,22 @@ const crumbs = [
   { name: data.title, href: path },
 ];
 
-// Внутренняя ссылка: профильная услуга (+ гео-страница, если задан город).
+// Внутренняя ссылка: профильная услуга; если задан город — ещё и страница города.
 const related: LinkCardItem[] = [];
 if (service) {
-  const href = city ? `/${city.slug}/${service.slug}/` : `/uslugi/${service.slug}/`;
   related.push({
-    title: city ? `${service.nameNom} ${city.prep}` : service.nameNom,
+    title: service.nameNom,
     sub: service.tagline,
-    href,
+    href: `/uslugi/${service.slug}/`,
     icon: service.icon as LinkCardItem['icon'],
+  });
+}
+if (city) {
+  related.push({
+    title: `Охрана ${city.prep}`,
+    sub: city.region !== city.nom ? city.region : undefined,
+    href: `/${city.slug}/`,
+    icon: 'pin',
   });
 }
 

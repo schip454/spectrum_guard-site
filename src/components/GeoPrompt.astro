@@ -1,0 +1,206 @@
+---
+/**
+ * Гео-подсказка: при первом визите спрашиваем город («Вы из Москвы?»), запоминаем выбор
+ * в localStorage и предлагаем перейти на страницу города. Без IP-геолокации (статика),
+ * поэтому по умолчанию предлагаем Москву с возможностью выбрать другой город или «по России».
+ * Показывается один раз, ненавязчиво, закрывается крестиком/Esc/кликом по фону.
+ */
+import { cities } from '../data/cities';
+import Icon from './icons/Icon.astro';
+
+const primary = cities.find((c) => c.slug === 'moskva') ?? cities[0];
+const rest = cities.filter((c) => c.slug !== primary.slug);
+---
+
+<div class="geo" data-geo hidden role="dialog" aria-modal="true" aria-label="Выбор города">
+  <div class="geo__backdrop" data-geo-close></div>
+  <div class="geo__card perimeter">
+    <button type="button" class="geo__x" data-geo-close aria-label="Закрыть">
+      <Icon name="close" size={18} />
+    </button>
+    <p class="geo__eyebrow mono">Ваш город</p>
+    <h2 class="geo__title">Вы из {primary.nom.replace('Москва', 'Москвы')}?</h2>
+    <p class="geo__text">Подскажем по вашему городу. Выезжаем по всей России.</p>
+
+    <div class="geo__actions">
+      <a href={`/${primary.slug}/`} class="geo__btn geo__btn--primary" data-geo-pick={primary.slug}>
+        Да, я из {primary.nom.replace('Москва', 'Москвы')}
+      </a>
+      <button type="button" class="geo__btn geo__btn--ghost" data-geo-more>Другой город</button>
+    </div>
+
+    <div class="geo__cities" data-geo-cities hidden>
+      {
+        rest.map((c) => (
+          <a href={`/${c.slug}/`} class="geo__city" data-geo-pick={c.slug}>
+            {c.nom}
+          </a>
+        ))
+      }
+      <button type="button" class="geo__city geo__city--other" data-geo-other>
+        Другой город · по России
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const KEY = 'sg-city';
+  const geo = document.querySelector<HTMLElement>('[data-geo]');
+  if (geo && !localStorage.getItem(KEY)) {
+    // Небольшая задержка, чтобы не накладываться на первый кадр/баннер cookie.
+    window.setTimeout(() => {
+      geo.hidden = false;
+      requestAnimationFrame(() => geo.classList.add('is-in'));
+    }, 1200);
+
+    const close = () => {
+      geo.classList.remove('is-in');
+      window.setTimeout(() => (geo.hidden = true), 250);
+    };
+    geo.querySelectorAll('[data-geo-close]').forEach((el) =>
+      el.addEventListener('click', () => {
+        localStorage.setItem(KEY, 'skip');
+        close();
+      })
+    );
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !geo.hidden) {
+        localStorage.setItem(KEY, 'skip');
+        close();
+      }
+    });
+    geo.querySelector('[data-geo-more]')?.addEventListener('click', () => {
+      geo.querySelector('[data-geo-cities]')?.removeAttribute('hidden');
+    });
+    geo.querySelector('[data-geo-other]')?.addEventListener('click', () => {
+      localStorage.setItem(KEY, 'other');
+      close();
+    });
+    // Запоминаем выбор города (ссылка сама ведёт на страницу города).
+    geo.querySelectorAll<HTMLElement>('[data-geo-pick]').forEach((el) =>
+      el.addEventListener('click', () => localStorage.setItem(KEY, el.dataset.geoPick || 'skip'))
+    );
+  }
+</script>
+
+<style>
+  .geo[hidden] {
+    display: none;
+  }
+  .geo {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-toast);
+    display: grid;
+    place-items: center;
+    padding: var(--space-4);
+    opacity: 0;
+    transition: opacity 0.25s var(--ease);
+  }
+  .geo.is-in {
+    opacity: 1;
+  }
+  .geo__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(7, 9, 11, 0.7);
+    backdrop-filter: blur(2px);
+  }
+  .geo__card {
+    position: relative;
+    width: min(94vw, 420px);
+    padding: clamp(1.5rem, 4vw, 2.25rem);
+    background: var(--bg-800);
+    border: 1px solid var(--line-2);
+    border-radius: var(--radius);
+  }
+  .geo__x {
+    position: absolute;
+    top: var(--space-3);
+    right: var(--space-3);
+    display: inline-flex;
+    padding: var(--space-2);
+    color: var(--text-500);
+    border-radius: var(--radius);
+  }
+  .geo__x:hover {
+    color: var(--text-100);
+  }
+  .geo__eyebrow {
+    color: var(--accent);
+  }
+  .geo__title {
+    font-size: var(--fs-h2);
+    margin: var(--space-2) 0 var(--space-3);
+  }
+  .geo__text {
+    color: var(--text-300);
+    font-size: var(--fs-small);
+    margin-bottom: var(--space-6);
+  }
+  .geo__actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+  .geo__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.8rem 1.2rem;
+    border-radius: var(--radius);
+    border: 1px solid transparent;
+    font-weight: 500;
+    cursor: pointer;
+    transition: border-color var(--dur) var(--ease), background-color var(--dur) var(--ease);
+  }
+  .geo__btn--primary {
+    background: var(--accent);
+    color: #1a1206;
+    font-weight: 700;
+  }
+  .geo__btn--primary:hover {
+    background: #d4ab63;
+  }
+  .geo__btn--ghost {
+    border-color: var(--line-2);
+    color: var(--text-100);
+  }
+  .geo__btn--ghost:hover {
+    border-color: var(--accent);
+  }
+  .geo__cities {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-2);
+    margin-top: var(--space-4);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--line);
+  }
+  .geo__city {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.55rem 0.75rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    color: var(--text-300);
+    font-size: var(--fs-small);
+    cursor: pointer;
+    transition: border-color var(--dur) var(--ease), color var(--dur) var(--ease);
+  }
+  .geo__city:hover {
+    border-color: var(--accent);
+    color: var(--text-100);
+  }
+  .geo__city--other {
+    grid-column: 1 / -1;
+    color: var(--text-500);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .geo {
+      transition: none;
+    }
+  }
+</style>
