@@ -12,7 +12,7 @@ const citySlugs = cities.map((c) => c.slug) as [string, ...string[]];
  * Автор обязателен для E-E-A-T (Schema Article).
  */
 const blog = defineCollection({
-  loader: glob({ pattern: '**/*.md', base: './src/content/blog' }),
+  loader: glob({ pattern: '*.md', base: 'src/content/blog' }),
   schema: z.object({
     title: z.string(),
     description: z.string(),
