@@ -102,4 +102,11 @@ const schemas = [
   <section class="container section">
     <LinkCardGrid eyebrow="География" heading="Другие города" items={cityLinks} columns={3} />
   </section>
+
+  {/* Запоминаем город — подставится в форму заявки на любой странице */}
+  <script is:inline define:vars={{ cityName: city.nom }}>
+    try {
+      localStorage.setItem('sg-city-name', cityName);
+    } catch (e) {}
+  </script>
 </Base>

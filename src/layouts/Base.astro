@@ -12,7 +12,6 @@ import Footer from '../components/Footer.astro';
 import Analytics from '../components/Analytics.astro';
 import CookieConsent from '../components/CookieConsent.astro';
 import Lightbox from '../components/Lightbox.astro';
-import GeoPrompt from '../components/GeoPrompt.astro';
 import { organizationSchema, graph } from '../lib/schema';
 
 interface Props {
@@ -58,7 +57,6 @@ const jsonLd = graph(organizationSchema(), ...schemas);
     <Analytics />
     <CookieConsent />
     <Lightbox />
-    <GeoPrompt />
 
     <script>
       // Появление блоков при скролле. Включаем режим только при наличии JS и если

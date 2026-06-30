@@ -14,16 +14,6 @@ function trackErrors(page: Page) {
 
 const KEY_PAGES = ['/', '/uslugi/', '/uslugi/lichnaya-ohrana/', '/uslugi/perevozka-cennyh-gruzov/', '/moskva/', '/goroda/', '/voprosy/', '/otzyvy/', '/kontakty/'];
 
-// Гео-подсказка — модалка при первом визите; в тестах её отключаем (выбор города уже сделан),
-// чтобы оверлей не мешал кликам. Cookie-баннер не трогаем (его проверяет отдельный тест).
-test.beforeEach(async ({ page }) => {
-  await page.addInitScript(() => {
-    try {
-      localStorage.setItem('sg-city', 'skip');
-    } catch {}
-  });
-});
-
 test.describe('Дымовые проверки + консоль', () => {
   for (const path of KEY_PAGES) {
     test(`страница ${path} грузится без ошибок консоли`, async ({ page }) => {

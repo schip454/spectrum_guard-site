@@ -6,12 +6,14 @@
  * Отправка на public/api/lead.php → e-mail + Telegram-бот. Анти-спам: honeypot + метка времени.
  */
 import Button from './Button.astro';
+import { cities } from '../data/cities';
 
 interface Props {
   source?: string;
   id?: string;
 }
 const { source = '', id = 'lead-form' } = Astro.props;
+const cityListId = `cities-${id}`;
 ---
 
 <form class="lead-form" id={id} action="/api/lead.php" method="post" data-lead-form>
@@ -51,8 +53,23 @@ const { source = '', id = 'lead-form' } = Astro.props;
   </fieldset>
 
   <label class="field">
+    <span class="field__label">Город</span>
+    <input
+      type="text"
+      name="city"
+      list={cityListId}
+      autocomplete="address-level2"
+      placeholder="Ваш город"
+      data-city
+    />
+    <datalist id={cityListId}>
+      {cities.map((c) => <option value={c.nom} />)}
+    </datalist>
+  </label>
+
+  <label class="field">
     <span class="field__label">Коротко о ситуации <span class="field__opt">— необязательно</span></span>
-    <textarea name="message" rows={3} placeholder="Что нужно и в каком городе"></textarea>
+    <textarea name="message" rows={3} placeholder="Что нужно"></textarea>
   </label>
 
   <label class="consent">
@@ -90,9 +107,20 @@ const { source = '', id = 'lead-form' } = Astro.props;
     return out;
   }
 
+  const CITY_KEY = 'sg-city-name';
   document.querySelectorAll<HTMLFormElement>('[data-lead-form]').forEach((form) => {
     const tsField = form.querySelector<HTMLInputElement>('[data-ts]');
     if (tsField) tsField.value = String(Date.now());
+
+    // Город: подставляем запомненный (из визита на страницу города), сохраняем при изменении.
+    const cityField = form.querySelector<HTMLInputElement>('[data-city]');
+    if (cityField) {
+      const saved = localStorage.getItem(CITY_KEY);
+      if (saved && !cityField.value) cityField.value = saved;
+      cityField.addEventListener('change', () => {
+        if (cityField.value.trim()) localStorage.setItem(CITY_KEY, cityField.value.trim());
+      });
+    }
 
     const contact = form.querySelector<HTMLInputElement>('[data-contact]');
     const hint = form.querySelector<HTMLElement>('[data-contact-hint]');

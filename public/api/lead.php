@@ -100,6 +100,7 @@ $hits[] = $nowSec;
 $name    = field('name', 120) ?: '—';
 $method  = field('method', 20);
 $contact = field('contact', 200);
+$city    = field('city', 120);
 $message = field('message', 2000);
 $source  = field('source', 200) ?: 'Сайт';
 
@@ -120,6 +121,7 @@ $lines = [
   'Имя: ' . $name,
   'Связь: ' . $methodLabel . ' — ' . $contact,
 ];
+if ($city !== '') $lines[] = 'Город: ' . $city;
 if ($message !== '') $lines[] = 'Сообщение: ' . $message;
 $lines[] = 'Источник: ' . $source;
 $lines[] = 'Время: ' . date('Y-m-d H:i:s');
