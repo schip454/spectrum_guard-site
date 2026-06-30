@@ -25,23 +25,23 @@ const description =
 const why = [
   {
     icon: 'guard' as const,
-    title: 'Действуем по закону',
-    text: 'Обеспечиваем безопасность и фиксируем факты, но не давим на третьих лиц. Защита, а не самосуд.',
+    title: 'Подготовленные специалисты',
+    text: 'Опытная команда, работа на опережение и чёткий план действий под каждую задачу.',
   },
   {
     icon: 'threat' as const,
-    title: 'Без лишнего внимания',
-    text: 'Детали задачи и данные клиента не разглашаем. Работаем спокойно и не привлекаем внимания.',
+    title: 'Полная конфиденциальность',
+    text: 'Детали задачи и данные клиента не разглашаем. Работаем незаметно, без лишнего внимания.',
   },
   {
     icon: 'pin' as const,
-    title: '9 городов России',
-    text: 'Москва, Санкт-Петербург, Екатеринбург, Новосибирск, Сочи, Уфа, Челябинск, Пермь, Тюмень.',
+    title: 'По всей России',
+    text: 'Собственная команда в девяти городах и выезд в любой регион страны по запросу.',
   },
   {
     icon: 'clock' as const,
-    title: 'Заявки 24/7',
-    text: 'Перезвоним или ответим в Telegram. Подберём формат под задачу — от разовой смены до постоянного режима.',
+    title: 'Работаем 24/7',
+    text: 'Принимаем заявки круглосуточно. Перезвоним или ответим в Telegram, подберём формат под задачу.',
   },
 ];
 ---
@@ -56,7 +56,7 @@ const why = [
     <ul class="services-grid">
       {
         services.map((s, i) => (
-          <li>
+          <li class="reveal">
             <ServiceCard
               label={s.intentLabel}
               sub={s.tagline}
@@ -121,7 +121,7 @@ const why = [
 
   {/* География — 9 городов с кадрами, выбор города */}
   <section class="section container" aria-labelledby="geo-heading">
-    <div class="geo-head">
+    <div class="geo-head reveal">
       <div>
         <p class="eyebrow">География</p>
         <h2 id="geo-heading" class="home-h2">9 городов России</h2>
@@ -132,7 +132,7 @@ const why = [
     <ul class="geo-grid">
       {
         cities.map((c) => (
-          <li><CityCard city={c} /></li>
+          <li class="reveal"><CityCard city={c} /></li>
         ))
       }
     </ul>

@@ -1,0 +1,160 @@
+---
+/**
+ * Конверсионный попап. Появляется один раз за сессию, если пользователь провёл на сайте
+ * больше ~20 секунд (и не на странице контактов). Внутри — форма заявки для прямой
+ * конверсии. Закрывается крестиком/Esc/кликом по фону. Уважает повторные визиты (sessionStorage).
+ */
+import LeadForm from './LeadForm.astro';
+import Icon from './icons/Icon.astro';
+import { contacts } from '../data/contacts';
+---
+
+<div class="lpop" data-lpop hidden role="dialog" aria-modal="true" aria-label="Оставить заявку">
+  <div class="lpop__backdrop" data-lpop-close></div>
+  <div class="lpop__card perimeter perimeter--full">
+    <span class="perimeter__corner tl"></span>
+    <span class="perimeter__corner tr"></span>
+    <span class="perimeter__corner bl"></span>
+    <span class="perimeter__corner br"></span>
+
+    <button type="button" class="lpop__x" data-lpop-close aria-label="Закрыть">
+      <Icon name="close" size={18} />
+    </button>
+
+    <p class="lpop__eyebrow mono">Бесплатная консультация</p>
+    <h2 class="lpop__title">Обсудим вашу задачу по безопасности?</h2>
+    <p class="lpop__text">
+      Оставьте заявку — перезвоним или ответим в Telegram, подберём формат и сориентируем по
+      стоимости. Без обязательств.
+    </p>
+
+    <LeadForm source="Попап (20 сек)" id="lead-form-popup" />
+
+    <a class="lpop__tg" href={contacts.telegram.url} rel="noopener" target="_blank">
+      <Icon name="telegram" size={18} /> Или напишите в Telegram
+    </a>
+  </div>
+</div>
+
+<script>
+  const KEY = 'sg-lead-popup';
+  const DELAY = 20000;
+  const pop = document.querySelector<HTMLElement>('[data-lpop]');
+  const onContacts = location.pathname.replace(/\/+$/, '').endsWith('/kontakty');
+  if (pop && !onContacts && !sessionStorage.getItem(KEY)) {
+    let shown = false;
+    const open = () => {
+      if (shown || sessionStorage.getItem(KEY)) return;
+      shown = true;
+      sessionStorage.setItem(KEY, '1');
+      pop.hidden = false;
+      requestAnimationFrame(() => pop.classList.add('is-in'));
+    };
+    const close = () => {
+      pop.classList.remove('is-in');
+      window.setTimeout(() => (pop.hidden = true), 250);
+    };
+    const timer = window.setTimeout(open, DELAY);
+
+    pop.querySelectorAll('[data-lpop-close]').forEach((el) => el.addEventListener('click', close));
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !pop.hidden) close();
+    });
+    // Если пользователь сам дошёл до формы заявки — попап не нужен.
+    document.addEventListener(
+      'submit',
+      () => {
+        window.clearTimeout(timer);
+        sessionStorage.setItem(KEY, '1');
+      },
+      true
+    );
+  }
+</script>
+
+<style>
+  .lpop[hidden] {
+    display: none;
+  }
+  .lpop {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-toast);
+    display: grid;
+    place-items: center;
+    padding: var(--space-4);
+    opacity: 0;
+    transition: opacity 0.25s var(--ease);
+  }
+  .lpop.is-in {
+    opacity: 1;
+  }
+  .lpop__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(7, 9, 11, 0.74);
+    backdrop-filter: blur(3px);
+  }
+  .lpop__card {
+    position: relative;
+    width: min(94vw, 460px);
+    max-height: 92vh;
+    overflow-y: auto;
+    padding: clamp(1.5rem, 4vw, 2.5rem);
+    background: var(--bg-800);
+    border: 1px solid var(--line-2);
+    border-radius: var(--radius);
+    outline-color: var(--line-2);
+    transform: translateY(12px);
+    transition: transform 0.35s var(--ease-expo);
+  }
+  .lpop.is-in .lpop__card {
+    transform: none;
+  }
+  .lpop__x {
+    position: absolute;
+    top: var(--space-3);
+    right: var(--space-3);
+    display: inline-flex;
+    padding: var(--space-2);
+    color: var(--text-500);
+    border-radius: var(--radius);
+    z-index: 1;
+  }
+  .lpop__x:hover {
+    color: var(--text-100);
+  }
+  .lpop__eyebrow {
+    color: var(--accent);
+  }
+  .lpop__title {
+    font-size: var(--fs-h2);
+    margin: var(--space-2) 0 var(--space-3);
+    max-width: 22ch;
+  }
+  .lpop__text {
+    color: var(--text-300);
+    font-size: var(--fs-small);
+    margin-bottom: var(--space-6);
+  }
+  .lpop__tg {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-top: var(--space-4);
+    color: var(--text-300);
+    font-size: var(--fs-small);
+  }
+  .lpop__tg:hover {
+    color: var(--accent);
+  }
+  .lpop__tg :global(svg) {
+    color: var(--accent);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .lpop,
+    .lpop__card {
+      transition: none;
+    }
+  }
+</style>

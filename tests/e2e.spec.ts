@@ -14,6 +14,16 @@ function trackErrors(page: Page) {
 
 const KEY_PAGES = ['/', '/uslugi/', '/uslugi/lichnaya-ohrana/', '/uslugi/perevozka-cennyh-gruzov/', '/moskva/', '/goroda/', '/voprosy/', '/otzyvy/', '/kontakty/'];
 
+// Конверсионный попап (20 сек) в тестах отключаем, чтобы модалка не перехватила клики
+// при медленном прогоне/ретрае. На проде он работает как задумано.
+test.beforeEach(async ({ page }) => {
+  await page.addInitScript(() => {
+    try {
+      sessionStorage.setItem('sg-lead-popup', '1');
+    } catch {}
+  });
+});
+
 test.describe('Дымовые проверки + консоль', () => {
   for (const path of KEY_PAGES) {
     test(`страница ${path} грузится без ошибок консоли`, async ({ page }) => {

@@ -262,11 +262,10 @@ small {
    Скрываем только когда JS включил режим (body.reveal-on) — без JS контент виден. */
 .reveal-on .reveal {
   opacity: 0;
-  transform: translateY(14px);
+  transform: translateY(34px);
   transition:
-    opacity 0.6s var(--ease),
-    transform 0.6s var(--ease);
-  will-change: opacity, transform;
+    opacity var(--dur-reveal) var(--ease-expo),
+    transform var(--dur-reveal) var(--ease-expo);
 }
 .reveal-on .reveal.is-in {
   opacity: 1;

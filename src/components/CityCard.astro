@@ -13,7 +13,7 @@ interface Props {
 const { city } = Astro.props;
 ---
 
-<a href={`/${city.slug}/`} class="city-card reveal">
+<a href={`/${city.slug}/`} class="city-card">
   <span class="city-card__media">
     {city.heroImage && (
       <Media
