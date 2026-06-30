@@ -10,19 +10,17 @@ import ServiceCard from '../components/ServiceCard.astro';
 import CityCard from '../components/CityCard.astro';
 import AnswerFirst from '../components/AnswerFirst.astro';
 import CtaSection from '../components/CtaSection.astro';
-import Reviews from '../components/Reviews.astro';
 import Media from '../components/Media.astro';
 import Icon from '../components/icons/Icon.astro';
 import type { IconName } from '../components/icons/paths';
 import { services } from '../data/services';
 import { cities } from '../data/cities';
 
-const title = 'Spectrum Guard — охрана и личная безопасность в 9 городах России';
+const title = 'Spectrum Guard — охранное агентство | защита по всей России';
 const description =
-  'Spectrum Guard — охранное агентство: личная охрана, защита при угрозах, охрана при ' +
-  'переезде, помощь при конфликте с соседями и охрана мероприятий. Работаем в Москве, ' +
-  'Санкт-Петербурге, Екатеринбурге, Новосибирске, Сочи, Уфе, Челябинске, Перми и Тюмени. ' +
-  'Оставьте заявку или напишите в Telegram.';
+  'Spectrum Guard — профессиональная охрана и личная безопасность для частных лиц и бизнеса: ' +
+  'личная охрана, защита при угрозах, охрана мероприятий, перевозка ценных грузов, помощь при ' +
+  'переезде и конфликте с соседями. Работаем по всей России. Оставьте заявку.';
 
 const why = [
   {
@@ -71,11 +69,6 @@ const why = [
         ))
       }
     </ul>
-  </section>
-
-  {/* Отзывы — реальные обезличенные скриншоты */}
-  <section class="section container">
-    <Reviews heading="Отзывы клиентов" />
   </section>
 
   {/* О компании — с кадром */}
